@@ -4,6 +4,13 @@ Alinea en el tiempo los canales izquierdo y derecho del audio de un auto, sin DS
 
 Pensado para estéreos de fábrica con Android Auto o Bluetooth, donde no hay ajuste de retardo por altavoz.
 
+<p align="center">
+  <img src="capturas/inicio.png" width="22%" alt="Inicio">
+  <img src="capturas/avanzado.png" width="22%" alt="Ajuste manual">
+  <img src="capturas/guia1.png" width="22%" alt="Guía de colocación">
+  <img src="capturas/guia2.png" width="22%" alt="Guía de colocación, pasos">
+</p>
+
 ## Cómo funciona
 
 1. Captura el audio de la app de música (AudioPlaybackCapture).
