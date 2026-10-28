@@ -1,4 +1,4 @@
-package dev.personal.caralign;
+package dev.angelflower.caralign;
 
 import android.media.AudioAttributes;
 import android.media.AudioFormat;

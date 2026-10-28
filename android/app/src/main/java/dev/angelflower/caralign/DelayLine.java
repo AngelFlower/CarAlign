@@ -1,4 +1,4 @@
-package dev.personal.caralign;
+package dev.angelflower.caralign;
 
 /**
  * Retraso de un canal de un flujo estereo entrelazado, ajustable en vivo y sin chasquidos: el retraso se

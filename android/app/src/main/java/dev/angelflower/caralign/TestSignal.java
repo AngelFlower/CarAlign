@@ -1,4 +1,4 @@
-package dev.personal.caralign;
+package dev.angelflower.caralign;
 
 /** Secuencia de medicion: por repeticion un chirp solo en L y, `gap` muestras despues, uno solo en R. */
 final class TestSignal {

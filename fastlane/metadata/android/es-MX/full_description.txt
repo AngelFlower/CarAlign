@@ -1,0 +1,13 @@
+CarAlign mide con el micrófono del teléfono cuánto tarda el sonido de cada lado del auto en llegar a tu asiento y retrasa el canal adelantado (alrededor de 1 ms) para que la música se centre frente a ti.
+
+Pensada para estéreos de fábrica con Android Auto o Bluetooth que no tienen ajuste de retardo.
+
+• Alineación automática en lazo cerrado: mide, aplica y verifica.
+• Ajuste manual fino y demostración paso a paso.
+• Funciona con apps de música que permiten la captura de audio, como Tidal y Spotify.
+• Freno de seguridad: si algo falla, devuelve el sonido original.
+• Sin cuentas, sin anuncios, sin enviar datos.
+
+REQUISITO IMPORTANTE: Android no deja que una app silencie a otra. CarAlign necesita un canal ADB (se activa una vez tras cada reinicio con un ordenador: adb tcpip 5555) o Shizuku. Sin eso no se activa.
+
+La latencia extra es de ~90 a ~170 ms: sirve para música, no para ver video.

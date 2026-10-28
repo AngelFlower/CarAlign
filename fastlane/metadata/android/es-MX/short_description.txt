@@ -1,0 +1,1 @@
+Alinea en el tiempo el audio izquierdo y derecho de tu auto, sin DSP

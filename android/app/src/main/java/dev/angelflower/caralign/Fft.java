@@ -1,4 +1,4 @@
-package dev.personal.caralign;
+package dev.angelflower.caralign;
 
 /** FFT radix-2 in situ sobre arreglos re/im. Sin dependencias de Android. */
 final class Fft {

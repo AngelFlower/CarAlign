@@ -1,4 +1,4 @@
-package dev.personal.caralign;
+package dev.angelflower.caralign;
 
 import android.app.Notification;
 import android.app.NotificationChannel;

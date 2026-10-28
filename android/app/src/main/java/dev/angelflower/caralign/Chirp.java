@@ -1,4 +1,4 @@
-package dev.personal.caralign;
+package dev.angelflower.caralign;
 
 /**
  * Barrido exponencial 200-12000 Hz con ventana Hann. Reparte la energia por octava (el lineal dejaba casi

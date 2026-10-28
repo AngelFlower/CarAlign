@@ -4,4 +4,4 @@
 -keep class moe.shizuku.** { *; }
 -dontwarn okio.**
 -dontwarn org.slf4j.**
--keep class dev.personal.caralign.** { *; }
+-keep class dev.angelflower.caralign.** { *; }

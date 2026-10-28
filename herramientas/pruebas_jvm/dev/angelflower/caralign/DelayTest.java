@@ -1,4 +1,4 @@
-package dev.personal.caralign;
+package dev.angelflower.caralign;
 
 /** Pruebas del retraso deslizante: exactitud, ausencia de saltos, cambio de canal. */
 public class DelayTest {

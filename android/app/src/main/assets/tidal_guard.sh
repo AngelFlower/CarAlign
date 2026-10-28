@@ -4,7 +4,7 @@
 #    (cualquier app con un reproductor de medios activo, no solo Tidal) y a las apps de musica conocidas.
 #  - Restaura todo al instante si la app se detiene, se cae o deja de renovar la marca (>6 s).
 #  - Termina cuando no hay captura ni la app esta abierta ("app_alive" sin renovar >6 s durante ~3 s).
-APP=${CARALIGN_APP:-dev.personal.caralign}
+APP=${CARALIGN_APP:-dev.angelflower.caralign}
 # La app y el vigilante se pasan archivos por DOS carpetas: Android/media/<app> (funciona en Android 11+, donde el
 # usuario shell no puede entrar en Android/data) y Android/data/<app>/files (la de siempre). Se escribe en las dos y
 # se lee la mas reciente.

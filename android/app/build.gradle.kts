@@ -13,7 +13,7 @@ val keyProps = Properties().apply {
 }
 
 android {
-    namespace = "dev.personal.caralign"
+    namespace = "dev.angelflower.caralign"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -27,7 +27,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "dev.personal.caralign"
+        applicationId = "dev.angelflower.caralign"
         minSdk = 29
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

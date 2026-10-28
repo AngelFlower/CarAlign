@@ -1,4 +1,4 @@
-package dev.personal.caralign;
+package dev.angelflower.caralign;
 
 /**
  * Prueba de larga duracion del retraso: simula minutos de audio a 48 kHz y comprueba que la salida sigue siendo

@@ -1,4 +1,4 @@
-package dev.personal.caralign;
+package dev.angelflower.caralign;
 
 import java.util.ArrayList;
 import java.util.List;

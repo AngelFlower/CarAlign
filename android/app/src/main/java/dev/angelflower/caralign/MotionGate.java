@@ -1,4 +1,4 @@
-package dev.personal.caralign;
+package dev.angelflower.caralign;
 
 import android.content.Context;
 import android.hardware.Sensor;
