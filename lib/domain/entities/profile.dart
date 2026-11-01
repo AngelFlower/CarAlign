@@ -8,17 +8,10 @@ class Profile {
   final String name;
   final DelaySetting delay;
 
-  Map<String, dynamic> toJson() => {
-        'name': name,
-        'ms': delay.milliseconds,
-        'left': delay.side == ChannelSide.left,
-      };
+  Map<String, dynamic> toJson() => {'name': name, 'ms': delay.milliseconds, 'left': delay.side == ChannelSide.left};
 
   factory Profile.fromJson(Map<String, dynamic> json) => Profile(
-        json['name'] as String,
-        DelaySetting(
-          (json['ms'] as num).toDouble(),
-          (json['left'] as bool) ? ChannelSide.left : ChannelSide.right,
-        ),
-      );
+    json['name'] as String,
+    DelaySetting((json['ms'] as num).toDouble(), (json['left'] as bool) ? ChannelSide.left : ChannelSide.right),
+  );
 }

@@ -17,11 +17,14 @@ class AudioSource {
     if (raw.isEmpty) return const AudioSource(AudioSourceKind.unknown, '');
     final lower = raw.toLowerCase();
     final id = int.tryParse(RegExp(r'^\s*(\d+)').firstMatch(raw)?.group(1) ?? '');
-    final isBluetooth = lower.contains('bluetooth') ||
+    final isBluetooth =
+        lower.contains('bluetooth') ||
         lower.contains('a2dp') ||
         RegExp(r'(^|[^a-z])bt([^a-z]|$)').hasMatch(lower) ||
         _bluetoothIds.contains(id);
-    if (lower.contains('remote-submix') || id == 25) return AudioSource(AudioSourceKind.androidAuto, raw);
+    if (lower.contains('remote-submix') || id == 25) {
+      return AudioSource(AudioSourceKind.androidAuto, raw);
+    }
     if (isBluetooth) return AudioSource(AudioSourceKind.bluetooth, raw);
     if (id == 2) return AudioSource(AudioSourceKind.phoneSpeaker, raw);
     if (id == 11 || id == 12) return AudioSource(AudioSourceKind.usb, raw);

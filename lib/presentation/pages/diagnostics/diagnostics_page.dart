@@ -54,26 +54,36 @@ class _DiagnosticsPageState extends State<DiagnosticsPage> {
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(color: colors.surfaceContainerLow, borderRadius: BorderRadius.circular(16)),
-              child: SelectableText(c.report ?? tr.loading,
-                  style: text.bodySmall?.copyWith(fontFamily: 'monospace', height: 1.4)),
+              child: SelectableText(
+                c.report ?? tr.loading,
+                style: text.bodySmall?.copyWith(fontFamily: 'monospace', height: 1.4),
+              ),
             ),
             const SizedBox(height: 12),
-            Wrap(spacing: 8, runSpacing: 8, children: [
-              FilledButton.icon(
-                onPressed: c.testing ? null : c.testMute,
-                icon: c.testing
-                    ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
-                    : const Icon(Icons.volume_off),
-                label: Text(tr.testMute),
-              ),
-              OutlinedButton.icon(onPressed: () => _copy(c), icon: const Icon(Icons.copy), label: Text(tr.copyReport)),
-              OutlinedButton.icon(onPressed: c.loadReport, icon: const Icon(Icons.refresh), label: Text(tr.refresh)),
-              OutlinedButton.icon(
-                onPressed: c.openBatterySettings,
-                icon: const Icon(Icons.battery_saver),
-                label: Text(tr.batterySaver),
-              ),
-            ]),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                FilledButton.icon(
+                  onPressed: c.testing ? null : c.testMute,
+                  icon: c.testing
+                      ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                      : const Icon(Icons.volume_off),
+                  label: Text(tr.testMute),
+                ),
+                OutlinedButton.icon(
+                  onPressed: () => _copy(c),
+                  icon: const Icon(Icons.copy),
+                  label: Text(tr.copyReport),
+                ),
+                OutlinedButton.icon(onPressed: c.loadReport, icon: const Icon(Icons.refresh), label: Text(tr.refresh)),
+                OutlinedButton.icon(
+                  onPressed: c.openBatterySettings,
+                  icon: const Icon(Icons.battery_saver),
+                  label: Text(tr.batterySaver),
+                ),
+              ],
+            ),
             if (c.muteResult != null) ...[
               const SizedBox(height: 12),
               Container(

@@ -19,18 +19,21 @@ class DemoSection extends StatelessWidget {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          Text(tr.title, style: text.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
-          const SizedBox(height: 4),
-          Text(tr.description, style: TextStyle(color: colors.onSurfaceVariant)),
-          const SizedBox(height: 12),
-          if (profiles.isEmpty)
-            Text(tr.needsProfile, style: TextStyle(color: colors.onSurfaceVariant))
-          else if (demo.running)
-            ..._running(context)
-          else
-            ..._idle(context),
-        ]),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(tr.title, style: text.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
+            const SizedBox(height: 4),
+            Text(tr.description, style: TextStyle(color: colors.onSurfaceVariant)),
+            const SizedBox(height: 12),
+            if (profiles.isEmpty)
+              Text(tr.needsProfile, style: TextStyle(color: colors.onSurfaceVariant))
+            else if (demo.running)
+              ..._running(context)
+            else
+              ..._idle(context),
+          ],
+        ),
       ),
     );
   }
@@ -39,7 +42,9 @@ class DemoSection extends StatelessWidget {
     final text = Theme.of(context).textTheme;
     final target = demo.profiles[demo.selectedIndex].delay.milliseconds;
     return [
-      Center(child: Text(t.common.millisecondsValue(value: formatFixed(demo.frame.shownMs, 2)), style: text.displaySmall)),
+      Center(
+        child: Text(t.common.millisecondsValue(value: formatFixed(demo.frame.shownMs, 2)), style: text.displaySmall),
+      ),
       Center(child: Text(demo.frame.description)),
       const SizedBox(height: 8),
       LinearProgressIndicator(value: target <= 0 ? 0 : (demo.frame.shownMs / target).clamp(0.0, 1.0)),
@@ -65,11 +70,13 @@ class DemoSection extends StatelessWidget {
           for (var i = 0; i < profiles.length; i++)
             DropdownMenuItem(
               value: i,
-              child: Text(t.advanced.demo.profileItem(
-                name: profiles[i].name,
-                ms: formatFixed(profiles[i].delay.milliseconds, 2),
-                side: profiles[i].delay.side.shortLabel,
-              )),
+              child: Text(
+                t.advanced.demo.profileItem(
+                  name: profiles[i].name,
+                  ms: formatFixed(profiles[i].delay.milliseconds, 2),
+                  side: profiles[i].delay.side.shortLabel,
+                ),
+              ),
             ),
         ],
         onChanged: (v) => demo.selectProfile(v ?? 0),
@@ -93,27 +100,30 @@ class DemoSection extends StatelessWidget {
         display: (v) => '${v.round()}',
         onChanged: demo.setSteps,
       ),
-      Row(children: [
-        Expanded(
-          child: FilledButton.icon(
-            style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(56)),
-            onPressed: () => demo.play(loop: false),
-            icon: const Icon(Icons.play_arrow),
-            label: Text(t.advanced.demo.toProfile, style: const TextStyle(fontSize: 16)),
+      Row(
+        children: [
+          Expanded(
+            child: FilledButton.icon(
+              style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(56)),
+              onPressed: () => demo.play(loop: false),
+              icon: const Icon(Icons.play_arrow),
+              label: Text(t.advanced.demo.toProfile, style: const TextStyle(fontSize: 16)),
+            ),
           ),
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: OutlinedButton.icon(
-            style: OutlinedButton.styleFrom(
+          const SizedBox(width: 8),
+          Expanded(
+            child: OutlinedButton.icon(
+              style: OutlinedButton.styleFrom(
                 minimumSize: const Size.fromHeight(56),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
-            onPressed: () => demo.play(loop: true),
-            icon: const Icon(Icons.repeat),
-            label: Text(t.advanced.demo.roundTrip, style: const TextStyle(fontSize: 16)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              ),
+              onPressed: () => demo.play(loop: true),
+              icon: const Icon(Icons.repeat),
+              label: Text(t.advanced.demo.roundTrip, style: const TextStyle(fontSize: 16)),
+            ),
           ),
-        ),
-      ]),
+        ],
+      ),
     ];
   }
 }
@@ -137,19 +147,21 @@ class _SliderRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(children: [
-      Text(label),
-      Expanded(
-        child: Slider(
-          value: value,
-          min: min,
-          max: max,
-          divisions: divisions,
-          label: display(value),
-          onChanged: onChanged,
+    return Row(
+      children: [
+        Text(label),
+        Expanded(
+          child: Slider(
+            value: value,
+            min: min,
+            max: max,
+            divisions: divisions,
+            label: display(value),
+            onChanged: onChanged,
+          ),
         ),
-      ),
-      Text(display(value)),
-    ]);
+        Text(display(value)),
+      ],
+    );
   }
 }

@@ -30,20 +30,23 @@ class SideViewPainter extends CustomPainter {
 
     // seat: cushion and backrest
     final cushion = RRect.fromRectAndRadius(
-        Rect.fromLTRB(w * 0.12, h * 0.76, w * 0.46, h * 0.86), const Radius.circular(12));
+      Rect.fromLTRB(w * 0.12, h * 0.76, w * 0.46, h * 0.86),
+      const Radius.circular(12),
+    );
     c.drawRRect(cushion, fill);
     c.drawRRect(cushion, line);
     c.save();
     c.translate(w * 0.17, h * 0.78);
     c.rotate(-0.12);
-    final back = RRect.fromRectAndRadius(
-        Rect.fromLTRB(-w * 0.05, -h * 0.46, w * 0.05, 0), const Radius.circular(12));
+    final back = RRect.fromRectAndRadius(Rect.fromLTRB(-w * 0.05, -h * 0.46, w * 0.05, 0), const Radius.circular(12));
     c.drawRRect(back, fill);
     c.drawRRect(back, line);
     c.restore();
     // headrest
     final headrest = RRect.fromRectAndRadius(
-        Rect.fromLTRB(w * 0.095, h * 0.2, w * 0.195, h * 0.37), const Radius.circular(10));
+      Rect.fromLTRB(w * 0.095, h * 0.2, w * 0.195, h * 0.37),
+      const Radius.circular(10),
+    );
     c.drawRRect(headrest, fill);
     c.drawRRect(headrest, line);
 
@@ -57,22 +60,49 @@ class SideViewPainter extends CustomPainter {
       ..style = PaintingStyle.stroke;
     drawDashedLine(c, headC.translate(0, 0) + Offset(-h * 0.14, 0), Offset(w * 0.74, earY), guide);
     c.drawCircle(Offset(headC.dx, earY), 5, Paint()..color = s.primary);
-    drawLabel(c, t.placement.figure.earHeight, Offset(w * 0.58, earY - h * 0.07), s.primary, size: 12, bold: true, maxW: w * 0.3);
+    drawLabel(
+      c,
+      t.placement.figure.earHeight,
+      Offset(w * 0.58, earY - h * 0.07),
+      s.primary,
+      size: 12,
+      bold: true,
+      maxW: w * 0.3,
+    );
 
     // phone lying on the headrest (profile): microphone at the front
     final ph = Rect.fromLTRB(w * 0.14, earY - h * 0.045, w * 0.4, earY + h * 0.0);
     c.drawRRect(RRect.fromRectAndRadius(ph, const Radius.circular(4)), Paint()..color = s.onSurface);
     c.drawRRect(
-        RRect.fromRectAndRadius(Rect.fromLTRB(ph.left + 3, ph.top + 1.5, ph.right - 3, ph.top + 5), const Radius.circular(2)),
-        Paint()..color = dark ? const Color(0xFF263238) : const Color(0xFF455A64));
+      RRect.fromRectAndRadius(
+        Rect.fromLTRB(ph.left + 3, ph.top + 1.5, ph.right - 3, ph.top + 5),
+        const Radius.circular(2),
+      ),
+      Paint()..color = dark ? const Color(0xFF263238) : const Color(0xFF455A64),
+    );
     c.drawCircle(Offset(ph.right - 4, ph.bottom - 3), 3.5, Paint()..color = s.error);
     final errP = Paint()
       ..color = s.error
       ..strokeWidth = 2.5;
     drawArrow(c, Offset(ph.right + 6, ph.center.dy + 14), Offset(w * 0.74, ph.center.dy + 14), errP);
-    drawLabel(c, t.placement.figure.micBottomEdge, Offset(w * 0.56, ph.center.dy + 42), s.error,
-        size: 11, bold: true, maxW: w * 0.36);
-    drawLabel(c, t.placement.figure.phoneLying, Offset(w * 0.27, ph.top - 22), s.onSurface, size: 11, bold: true, maxW: w * 0.2);
+    drawLabel(
+      c,
+      t.placement.figure.micBottomEdge,
+      Offset(w * 0.56, ph.center.dy + 42),
+      s.error,
+      size: 11,
+      bold: true,
+      maxW: w * 0.36,
+    );
+    drawLabel(
+      c,
+      t.placement.figure.phoneLying,
+      Offset(w * 0.27, ph.top - 22),
+      s.onSurface,
+      size: 11,
+      bold: true,
+      maxW: w * 0.2,
+    );
   }
 
   @override

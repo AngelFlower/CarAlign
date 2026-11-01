@@ -21,22 +21,27 @@ class CarChecklist extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(color: scheme.surfaceContainerHigh, borderRadius: BorderRadius.circular(16)),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(t.placement.carTitle, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
-        const SizedBox(height: 8),
-        for (final item in items)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 3),
-            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Icon(Icons.check_circle_outline, size: 20, color: scheme.primary),
-              const SizedBox(width: 10),
-              Expanded(child: Text(item, style: theme.textTheme.bodyLarge)),
-            ]),
-          ),
-        const SizedBox(height: 6),
-        Text(t.placement.rearWarning,
-            style: theme.textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant)),
-      ]),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(t.placement.carTitle, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
+          const SizedBox(height: 8),
+          for (final item in items)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 3),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(Icons.check_circle_outline, size: 20, color: scheme.primary),
+                  const SizedBox(width: 10),
+                  Expanded(child: Text(item, style: theme.textTheme.bodyLarge)),
+                ],
+              ),
+            ),
+          const SizedBox(height: 6),
+          Text(t.placement.rearWarning, style: theme.textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant)),
+        ],
+      ),
     );
   }
 }

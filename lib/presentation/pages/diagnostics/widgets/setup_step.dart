@@ -11,15 +11,18 @@ class SetupStep extends StatelessWidget {
     final colors = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        CircleAvatar(
-          radius: 13,
-          backgroundColor: colors.primaryContainer,
-          child: Text(number, style: TextStyle(color: colors.onPrimaryContainer, fontSize: 13)),
-        ),
-        const SizedBox(width: 12),
-        Expanded(child: Text(text, style: Theme.of(context).textTheme.bodyMedium)),
-      ]),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CircleAvatar(
+            radius: 13,
+            backgroundColor: colors.primaryContainer,
+            child: Text(number, style: TextStyle(color: colors.onPrimaryContainer, fontSize: 13)),
+          ),
+          const SizedBox(width: 12),
+          Expanded(child: Text(text, style: Theme.of(context).textTheme.bodyMedium)),
+        ],
+      ),
     );
   }
 }

@@ -189,6 +189,9 @@ class Translations$notice$en {
 
 	/// en: 'Without the guard the original audio can't be muted; reopen the app or check the setup steps in Diagnostics.'
 	String get demoNeedsGuard => 'Without the guard the original audio can\'t be muted; reopen the app or check the setup steps in Diagnostics.';
+
+	/// en: 'Add a song to the player first, then run the demo.'
+	String get demoNeedsMusic => 'Add a song to the player first, then run the demo.';
 }
 
 // Path: home
@@ -212,6 +215,8 @@ class Translations$home$en {
 	late final Translations$home$measuring$en measuring = Translations$home$measuring$en.internal(_root);
 	late final Translations$home$result$en result = Translations$home$result$en.internal(_root);
 	late final Translations$home$profiles$en profiles = Translations$home$profiles$en.internal(_root);
+	late final Translations$home$player$en player = Translations$home$player$en.internal(_root);
+	late final Translations$home$delay$en delay = Translations$home$delay$en.internal(_root);
 }
 
 // Path: advanced
@@ -228,6 +233,7 @@ class Translations$advanced$en {
 	late final Translations$advanced$manual$en manual = Translations$advanced$manual$en.internal(_root);
 	late final Translations$advanced$demo$en demo = Translations$advanced$demo$en.internal(_root);
 	late final Translations$advanced$diagnostics$en diagnostics = Translations$advanced$diagnostics$en.internal(_root);
+	late final Translations$advanced$capture$en capture = Translations$advanced$capture$en.internal(_root);
 }
 
 // Path: diagnostics
@@ -277,11 +283,11 @@ class Translations$diagnostics$en {
 	/// en: 'Important limitation'
 	String get limitationTitle => 'Important limitation';
 
-	/// en: 'Android doesn't let a regular app mute another one. CarAlign needs an ADB channel to do it: it has to be enabled from a computer (adb tcpip 5555) every time the phone restarts, or you can use Shizuku. Without that channel the app can't mute the original audio and won't start.'
-	String get limitationBody => 'Android doesn\'t let a regular app mute another one. CarAlign needs an ADB channel to do it: it has to be enabled from a computer (adb tcpip 5555) every time the phone restarts, or you can use Shizuku. Without that channel the app can\'t mute the original audio and won\'t start.';
+	/// en: 'The built-in player needs nothing special. Capture mode (delaying other music apps) is different: Android doesn't let a regular app mute another one, so it needs an ADB channel, enabled from a computer (adb tcpip 5555) every time the phone restarts, or Shizuku. Without that channel capture mode can't mute the original audio and won't start.'
+	String get limitationBody => 'The built-in player needs nothing special. Capture mode (delaying other music apps) is different: Android doesn\'t let a regular app mute another one, so it needs an ADB channel, enabled from a computer (adb tcpip 5555) every time the phone restarts, or Shizuku. Without that channel capture mode can\'t mute the original audio and won\'t start.';
 
-	/// en: 'Set up another phone'
-	String get setupTitle => 'Set up another phone';
+	/// en: 'Set up capture mode on another phone'
+	String get setupTitle => 'Set up capture mode on another phone';
 
 	/// en: 'Enable developer options: Settings → About phone → tap "Build number" 7 times.'
 	String get step1 => 'Enable developer options: Settings → About phone → tap "Build number" 7 times.';
@@ -301,8 +307,8 @@ class Translations$diagnostics$en {
 	/// en: 'Tap "Battery saver" and allow CarAlign to run unrestricted so it isn't closed in the background.'
 	String get step6 => 'Tap "Battery saver" and allow CarAlign to run unrestricted so it isn\'t closed in the background.';
 
-	/// en: 'Without this channel the app can't mute the original audio and you would hear it doubled.'
-	String get footer => 'Without this channel the app can\'t mute the original audio and you would hear it doubled.';
+	/// en: 'Without this channel, capture mode can't mute the original audio and you would hear it doubled.'
+	String get footer => 'Without this channel, capture mode can\'t mute the original audio and you would hear it doubled.';
 }
 
 // Path: guard
@@ -673,6 +679,69 @@ class Translations$home$profiles$en {
 	String get dialogHint => 'Name (e.g. Driver)';
 }
 
+// Path: home.player
+class Translations$home$player$en {
+	Translations$home$player$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Play your music here'
+	String get emptyTitle => 'Play your music here';
+
+	/// en: 'Add songs from your phone. CarAlign plays them with the left/right delay applied, so nothing else needs to be set up.'
+	String get emptySubtitle => 'Add songs from your phone. CarAlign plays them with the left/right delay applied, so nothing else needs to be set up.';
+
+	/// en: 'Add music'
+	String get addMusic => 'Add music';
+
+	/// en: 'Add more'
+	String get addMore => 'Add more';
+
+	/// en: 'Queue'
+	String get queue => 'Queue';
+
+	/// en: 'Clear queue'
+	String get clearQueue => 'Clear queue';
+
+	/// en: 'Tap a song to play it; swipe to remove it.'
+	String get queueHint => 'Tap a song to play it; swipe to remove it.';
+
+	/// en: 'Unknown artist'
+	String get unknownArtist => 'Unknown artist';
+
+	/// en: 'Play'
+	String get play => 'Play';
+
+	/// en: 'Pause'
+	String get pause => 'Pause';
+
+	/// en: 'Next'
+	String get next => 'Next';
+
+	/// en: 'Previous'
+	String get previous => 'Previous';
+
+	/// en: '$position / $duration'
+	String time({required Object position, required Object duration}) => '${position} / ${duration}';
+}
+
+// Path: home.delay
+class Translations$home$delay$en {
+	Translations$home$delay$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Applied to the player: $side +$ms ms'
+	String applied({required Object side, required Object ms}) => 'Applied to the player: ${side} +${ms} ms';
+
+	/// en: 'No delay yet. Run the automatic alignment.'
+	String get none => 'No delay yet. Run the automatic alignment.';
+}
+
 // Path: advanced.manual
 class Translations$advanced$manual$en {
 	Translations$advanced$manual$en.internal(this._root);
@@ -695,9 +764,6 @@ class Translations$advanced$manual$en {
 
 	/// en: 'Delay right'
 	String get delayRight => 'Delay right';
-
-	/// en: 'Start alignment'
-	String get startAlignment => 'Start alignment';
 }
 
 // Path: advanced.demo
@@ -773,6 +839,27 @@ class Translations$advanced$diagnostics$en {
 
 	/// en: 'What this phone supports and how to set it up'
 	String get subtitle => 'What this phone supports and how to set it up';
+}
+
+// Path: advanced.capture
+class Translations$advanced$capture$en {
+	Translations$advanced$capture$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Other music apps (advanced)'
+	String get title => 'Other music apps (advanced)';
+
+	/// en: 'Instead of the built-in player, CarAlign can capture the audio of Tidal, Spotify and other apps, delay it, and mute the original. This needs an ADB or Shizuku channel on the phone (see Diagnostics).'
+	String get description => 'Instead of the built-in player, CarAlign can capture the audio of Tidal, Spotify and other apps, delay it, and mute the original. This needs an ADB or Shizuku channel on the phone (see Diagnostics).';
+
+	/// en: 'Delay other apps' audio instead of the built-in player'
+	String get switchHint => 'Delay other apps\' audio instead of the built-in player';
+
+	/// en: 'Capture mode'
+	String get switchLabel => 'Capture mode';
 }
 
 // Path: placement.figure
@@ -852,6 +939,7 @@ extension on Translations {
 			'phase.done' => 'Done',
 			'notice.captureBlocked' => 'The app that is playing doesn\'t allow its audio to be processed (capture blocked). Alignment was stopped and the original audio was restored.',
 			'notice.demoNeedsGuard' => 'Without the guard the original audio can\'t be muted; reopen the app or check the setup steps in Diagnostics.',
+			'notice.demoNeedsMusic' => 'Add a song to the player first, then run the demo.',
 			'home.guideTooltip' => 'How to place the phone',
 			'home.advancedTooltip' => 'Advanced',
 			'home.readiness.ready' => 'All set · guard connected',
@@ -899,13 +987,27 @@ extension on Translations {
 			'home.profiles.autoName' => ({required Object time}) => 'Auto ${time}',
 			'home.profiles.dialogTitle' => 'Save profile',
 			'home.profiles.dialogHint' => 'Name (e.g. Driver)',
+			'home.player.emptyTitle' => 'Play your music here',
+			'home.player.emptySubtitle' => 'Add songs from your phone. CarAlign plays them with the left/right delay applied, so nothing else needs to be set up.',
+			'home.player.addMusic' => 'Add music',
+			'home.player.addMore' => 'Add more',
+			'home.player.queue' => 'Queue',
+			'home.player.clearQueue' => 'Clear queue',
+			'home.player.queueHint' => 'Tap a song to play it; swipe to remove it.',
+			'home.player.unknownArtist' => 'Unknown artist',
+			'home.player.play' => 'Play',
+			'home.player.pause' => 'Pause',
+			'home.player.next' => 'Next',
+			'home.player.previous' => 'Previous',
+			'home.player.time' => ({required Object position, required Object duration}) => '${position} / ${duration}',
+			'home.delay.applied' => ({required Object side, required Object ms}) => 'Applied to the player: ${side} +${ms} ms',
+			'home.delay.none' => 'No delay yet. Run the automatic alignment.',
 			'advanced.title' => 'Advanced',
 			'advanced.manual.title' => 'Manual adjustment',
 			'advanced.manual.subtitle' => 'Changes apply live if the alignment is active.',
 			'advanced.manual.difference' => ({required Object cm}) => '≈ ${cm} cm difference',
 			'advanced.manual.delayLeft' => 'Delay left',
 			'advanced.manual.delayRight' => 'Delay right',
-			'advanced.manual.startAlignment' => 'Start alignment',
 			'advanced.demo.title' => 'Demo',
 			'advanced.demo.description' => 'Goes from 0 ms to a profile with music playing: you can hear the stage centering.',
 			'advanced.demo.needsProfile' => 'Save a profile first (align, or use "Save current").',
@@ -925,6 +1027,10 @@ extension on Translations {
 			'advanced.demo.stepOf' => ({required Object label, required Object k, required Object n}) => '${label}  (step ${k} of ${n})',
 			'advanced.diagnostics.title' => 'Diagnostics and compatibility',
 			'advanced.diagnostics.subtitle' => 'What this phone supports and how to set it up',
+			'advanced.capture.title' => 'Other music apps (advanced)',
+			'advanced.capture.description' => 'Instead of the built-in player, CarAlign can capture the audio of Tidal, Spotify and other apps, delay it, and mute the original. This needs an ADB or Shizuku channel on the phone (see Diagnostics).',
+			'advanced.capture.switchHint' => 'Delay other apps\' audio instead of the built-in player',
+			'advanced.capture.switchLabel' => 'Capture mode',
 			'diagnostics.title' => 'Diagnostics',
 			'diagnostics.intro' => 'What this phone supports. If something doesn\'t work on another phone, copy the report and share it.',
 			'diagnostics.loading' => 'Loading…',
@@ -938,15 +1044,15 @@ extension on Translations {
 			'diagnostics.muteWorks' => ({required Object detail}) => 'The muting channel works on this phone.\n${detail}',
 			'diagnostics.muteFails' => ({required Object detail}) => 'The muting channel does NOT work yet.\n${detail}',
 			'diagnostics.limitationTitle' => 'Important limitation',
-			'diagnostics.limitationBody' => 'Android doesn\'t let a regular app mute another one. CarAlign needs an ADB channel to do it: it has to be enabled from a computer (adb tcpip 5555) every time the phone restarts, or you can use Shizuku. Without that channel the app can\'t mute the original audio and won\'t start.',
-			'diagnostics.setupTitle' => 'Set up another phone',
+			'diagnostics.limitationBody' => 'The built-in player needs nothing special. Capture mode (delaying other music apps) is different: Android doesn\'t let a regular app mute another one, so it needs an ADB channel, enabled from a computer (adb tcpip 5555) every time the phone restarts, or Shizuku. Without that channel capture mode can\'t mute the original audio and won\'t start.',
+			'diagnostics.setupTitle' => 'Set up capture mode on another phone',
 			'diagnostics.step1' => 'Enable developer options: Settings → About phone → tap "Build number" 7 times.',
 			'diagnostics.step2' => 'In developer options, enable "USB debugging".',
 			'diagnostics.step3' => 'Connect the phone to a computer with ADB and run  adb tcpip 5555 . It must be repeated every time the phone restarts.',
 			'diagnostics.step4' => 'Open CarAlign. If "Allow debugging?" appears, accept it and tick "Always allow".',
 			'diagnostics.step5' => 'Tap "Test muting". If it fails, read the reason: some brands need more settings (Xiaomi/Redmi/POCO: "USB debugging (security settings)"; Samsung: turn off Auto Blocker\'s USB command blocking).',
 			'diagnostics.step6' => 'Tap "Battery saver" and allow CarAlign to run unrestricted so it isn\'t closed in the background.',
-			'diagnostics.footer' => 'Without this channel the app can\'t mute the original audio and you would hear it doubled.',
+			'diagnostics.footer' => 'Without this channel, capture mode can\'t mute the original audio and you would hear it doubled.',
 			'guard.adbInactiveNoShizuku' => 'Network ADB is not active. Shizuku isn\'t running either: open Shizuku and tap Start (wireless debugging), or connect the cable and run adb tcpip 5555 from a computer.',
 			'guard.adbFailedNoShizuku' => ({required Object error}) => 'Couldn\'t use the phone\'s ADB: ${error}. Shizuku isn\'t running either: open Shizuku and tap Start (wireless debugging), or connect the cable and run adb tcpip 5555 from a computer.',
 			'guard.shizukuFailed' => ({required Object error}) => 'Shizuku is active but failed: ${error}',

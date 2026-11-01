@@ -10,4 +10,9 @@ abstract interface class SettingsRepository {
   Future<bool> loadHidePlacementGuide();
 
   Future<void> saveHidePlacementGuide(bool hide);
+
+  /// Whether the advanced capture mode (other music apps) is switched on.
+  Future<bool> loadCaptureMode();
+
+  Future<void> saveCaptureMode(bool enabled);
 }

@@ -37,7 +37,8 @@
   },
   "notice": {
     "captureBlocked": "The app that is playing doesn't allow its audio to be processed (capture blocked). Alignment was stopped and the original audio was restored.",
-    "demoNeedsGuard": "Without the guard the original audio can't be muted; reopen the app or check the setup steps in Diagnostics."
+    "demoNeedsGuard": "Without the guard the original audio can't be muted; reopen the app or check the setup steps in Diagnostics.",
+    "demoNeedsMusic": "Add a song to the player first, then run the demo."
   },
   "home": {
     "guideTooltip": "How to place the phone",
@@ -100,6 +101,25 @@
       "autoName": "Auto $time",
       "dialogTitle": "Save profile",
       "dialogHint": "Name (e.g. Driver)"
+    },
+    "player": {
+      "emptyTitle": "Play your music here",
+      "emptySubtitle": "Add songs from your phone. CarAlign plays them with the left/right delay applied, so nothing else needs to be set up.",
+      "addMusic": "Add music",
+      "addMore": "Add more",
+      "queue": "Queue",
+      "clearQueue": "Clear queue",
+      "queueHint": "Tap a song to play it; swipe to remove it.",
+      "unknownArtist": "Unknown artist",
+      "play": "Play",
+      "pause": "Pause",
+      "next": "Next",
+      "previous": "Previous",
+      "time": "$position / $duration"
+    },
+    "delay": {
+      "applied": "Applied to the player: $side +$ms ms",
+      "none": "No delay yet. Run the automatic alignment."
     }
   },
   "advanced": {
@@ -109,8 +129,7 @@
       "subtitle": "Changes apply live if the alignment is active.",
       "difference": "≈ $cm cm difference",
       "delayLeft": "Delay left",
-      "delayRight": "Delay right",
-      "startAlignment": "Start alignment"
+      "delayRight": "Delay right"
     },
     "demo": {
       "title": "Demo",
@@ -134,6 +153,12 @@
     "diagnostics": {
       "title": "Diagnostics and compatibility",
       "subtitle": "What this phone supports and how to set it up"
+    },
+    "capture": {
+      "title": "Other music apps (advanced)",
+      "description": "Instead of the built-in player, CarAlign can capture the audio of Tidal, Spotify and other apps, delay it, and mute the original. This needs an ADB or Shizuku channel on the phone (see Diagnostics).",
+      "switchHint": "Delay other apps' audio instead of the built-in player",
+      "switchLabel": "Capture mode"
     }
   },
   "diagnostics": {
@@ -150,15 +175,15 @@
     "muteWorks": "The muting channel works on this phone.\n$detail",
     "muteFails": "The muting channel does NOT work yet.\n$detail",
     "limitationTitle": "Important limitation",
-    "limitationBody": "Android doesn't let a regular app mute another one. CarAlign needs an ADB channel to do it: it has to be enabled from a computer (adb tcpip 5555) every time the phone restarts, or you can use Shizuku. Without that channel the app can't mute the original audio and won't start.",
-    "setupTitle": "Set up another phone",
+    "limitationBody": "The built-in player needs nothing special. Capture mode (delaying other music apps) is different: Android doesn't let a regular app mute another one, so it needs an ADB channel, enabled from a computer (adb tcpip 5555) every time the phone restarts, or Shizuku. Without that channel capture mode can't mute the original audio and won't start.",
+    "setupTitle": "Set up capture mode on another phone",
     "step1": "Enable developer options: Settings → About phone → tap \"Build number\" 7 times.",
     "step2": "In developer options, enable \"USB debugging\".",
     "step3": "Connect the phone to a computer with ADB and run  adb tcpip 5555 . It must be repeated every time the phone restarts.",
     "step4": "Open CarAlign. If \"Allow debugging?\" appears, accept it and tick \"Always allow\".",
     "step5": "Tap \"Test muting\". If it fails, read the reason: some brands need more settings (Xiaomi/Redmi/POCO: \"USB debugging (security settings)\"; Samsung: turn off Auto Blocker's USB command blocking).",
     "step6": "Tap \"Battery saver\" and allow CarAlign to run unrestricted so it isn't closed in the background.",
-    "footer": "Without this channel the app can't mute the original audio and you would hear it doubled."
+    "footer": "Without this channel, capture mode can't mute the original audio and you would hear it doubled."
   },
   "guard": {
     "adbInactiveNoShizuku": "Network ADB is not active. Shizuku isn't running either: open Shizuku and tap Start (wireless debugging), or connect the cable and run adb tcpip 5555 from a computer.",

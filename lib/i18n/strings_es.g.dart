@@ -126,6 +126,7 @@ class _Translations$notice$es extends Translations$notice$en {
 	// Translations
 	@override String get captureBlocked => 'La app que está sonando no permite procesar su audio (captura bloqueada). Se detuvo la alineación y se restauró el audio original.';
 	@override String get demoNeedsGuard => 'Sin el vigilante no se puede silenciar el original; abre la app de nuevo o revisa los pasos de preparación en Diagnóstico.';
+	@override String get demoNeedsMusic => 'Agrega una canción al reproductor primero y luego haz la demostración.';
 }
 
 // Path: home
@@ -144,6 +145,8 @@ class _Translations$home$es extends Translations$home$en {
 	@override late final _Translations$home$measuring$es measuring = _Translations$home$measuring$es._(_root);
 	@override late final _Translations$home$result$es result = _Translations$home$result$es._(_root);
 	@override late final _Translations$home$profiles$es profiles = _Translations$home$profiles$es._(_root);
+	@override late final _Translations$home$player$es player = _Translations$home$player$es._(_root);
+	@override late final _Translations$home$delay$es delay = _Translations$home$delay$es._(_root);
 }
 
 // Path: advanced
@@ -157,6 +160,7 @@ class _Translations$advanced$es extends Translations$advanced$en {
 	@override late final _Translations$advanced$manual$es manual = _Translations$advanced$manual$es._(_root);
 	@override late final _Translations$advanced$demo$es demo = _Translations$advanced$demo$es._(_root);
 	@override late final _Translations$advanced$diagnostics$es diagnostics = _Translations$advanced$diagnostics$es._(_root);
+	@override late final _Translations$advanced$capture$es capture = _Translations$advanced$capture$es._(_root);
 }
 
 // Path: diagnostics
@@ -179,15 +183,15 @@ class _Translations$diagnostics$es extends Translations$diagnostics$en {
 	@override String muteWorks({required Object detail}) => 'El canal para silenciar funciona en este teléfono.\n${detail}';
 	@override String muteFails({required Object detail}) => 'El canal para silenciar NO funciona todavía.\n${detail}';
 	@override String get limitationTitle => 'Limitación importante';
-	@override String get limitationBody => 'Android no deja que una app normal silencie a otra. CarAlign necesita un canal de ADB para hacerlo: hay que activarlo con un ordenador (adb tcpip 5555) cada vez que se reinicia el teléfono, o usar Shizuku. Sin ese canal la app no silencia el audio original y no se activa.';
-	@override String get setupTitle => 'Preparar otro teléfono';
+	@override String get limitationBody => 'El reproductor integrado no necesita nada especial. El modo captura (retrasar otras apps de música) es distinto: Android no deja que una app normal silencie a otra, así que necesita un canal de ADB, que se activa con un ordenador (adb tcpip 5555) cada vez que se reinicia el teléfono, o Shizuku. Sin ese canal el modo captura no puede silenciar el audio original y no se activa.';
+	@override String get setupTitle => 'Preparar el modo captura en otro teléfono';
 	@override String get step1 => 'Activa las opciones de desarrollador: Ajustes → Acerca del teléfono → toca 7 veces "Número de compilación".';
 	@override String get step2 => 'En Opciones de desarrollador activa "Depuración USB".';
 	@override String get step3 => 'Conecta el teléfono a un ordenador con ADB y ejecuta  adb tcpip 5555 . Hay que repetirlo cada vez que se reinicia el teléfono.';
 	@override String get step4 => 'Abre CarAlign. Si aparece "¿Permitir depuración?", acéptalo y marca "Siempre permitir".';
 	@override String get step5 => 'Pulsa "Probar silenciado". Si falla, mira el motivo: algunas marcas piden más ajustes (Xiaomi/Redmi/POCO: "Depuración USB (ajustes de seguridad)"; Samsung: desactivar el bloqueo de comandos por USB de Auto Blocker).';
 	@override String get step6 => 'Pulsa "Ahorro de batería" y permite que CarAlign funcione sin restricciones, para que no la cierren en segundo plano.';
-	@override String get footer => 'Sin este canal la app no puede silenciar el audio original y se oiría doble.';
+	@override String get footer => 'Sin este canal el modo captura no puede silenciar el audio original y se oiría doble.';
 }
 
 // Path: guard
@@ -379,6 +383,39 @@ class _Translations$home$profiles$es extends Translations$home$profiles$en {
 	@override String get dialogHint => 'Nombre (ej. Conductor)';
 }
 
+// Path: home.player
+class _Translations$home$player$es extends Translations$home$player$en {
+	_Translations$home$player$es._(TranslationsEs root) : this._root = root, super.internal(root);
+
+	final TranslationsEs _root; // ignore: unused_field
+
+	// Translations
+	@override String get emptyTitle => 'Reproduce tu música aquí';
+	@override String get emptySubtitle => 'Agrega canciones de tu teléfono. CarAlign las reproduce con el retraso izquierdo/derecho aplicado, sin configurar nada más.';
+	@override String get addMusic => 'Agregar música';
+	@override String get addMore => 'Agregar más';
+	@override String get queue => 'Cola';
+	@override String get clearQueue => 'Vaciar cola';
+	@override String get queueHint => 'Toca una canción para reproducirla; desliza para quitarla.';
+	@override String get unknownArtist => 'Artista desconocido';
+	@override String get play => 'Reproducir';
+	@override String get pause => 'Pausa';
+	@override String get next => 'Siguiente';
+	@override String get previous => 'Anterior';
+	@override String time({required Object position, required Object duration}) => '${position} / ${duration}';
+}
+
+// Path: home.delay
+class _Translations$home$delay$es extends Translations$home$delay$en {
+	_Translations$home$delay$es._(TranslationsEs root) : this._root = root, super.internal(root);
+
+	final TranslationsEs _root; // ignore: unused_field
+
+	// Translations
+	@override String applied({required Object side, required Object ms}) => 'Aplicado al reproductor: ${side} +${ms} ms';
+	@override String get none => 'Aún sin retraso. Haz la alineación automática.';
+}
+
 // Path: advanced.manual
 class _Translations$advanced$manual$es extends Translations$advanced$manual$en {
 	_Translations$advanced$manual$es._(TranslationsEs root) : this._root = root, super.internal(root);
@@ -391,7 +428,6 @@ class _Translations$advanced$manual$es extends Translations$advanced$manual$en {
 	@override String difference({required Object cm}) => '≈ ${cm} cm de diferencia';
 	@override String get delayLeft => 'Retrasar izq.';
 	@override String get delayRight => 'Retrasar der.';
-	@override String get startAlignment => 'Iniciar alineación';
 }
 
 // Path: advanced.demo
@@ -429,6 +465,19 @@ class _Translations$advanced$diagnostics$es extends Translations$advanced$diagno
 	// Translations
 	@override String get title => 'Diagnóstico y compatibilidad';
 	@override String get subtitle => 'Qué soporta este teléfono y cómo prepararlo';
+}
+
+// Path: advanced.capture
+class _Translations$advanced$capture$es extends Translations$advanced$capture$en {
+	_Translations$advanced$capture$es._(TranslationsEs root) : this._root = root, super.internal(root);
+
+	final TranslationsEs _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Otras apps de música (avanzado)';
+	@override String get description => 'En lugar del reproductor integrado, CarAlign puede capturar el audio de Tidal, Spotify y otras apps, retrasarlo y silenciar el original. Necesita un canal ADB o Shizuku en el teléfono (ver Diagnóstico).';
+	@override String get switchHint => 'Retrasar el audio de otras apps en vez del reproductor integrado';
+	@override String get switchLabel => 'Modo captura';
 }
 
 // Path: placement.figure
@@ -488,6 +537,7 @@ extension on TranslationsEs {
 			'phase.done' => 'Listo',
 			'notice.captureBlocked' => 'La app que está sonando no permite procesar su audio (captura bloqueada). Se detuvo la alineación y se restauró el audio original.',
 			'notice.demoNeedsGuard' => 'Sin el vigilante no se puede silenciar el original; abre la app de nuevo o revisa los pasos de preparación en Diagnóstico.',
+			'notice.demoNeedsMusic' => 'Agrega una canción al reproductor primero y luego haz la demostración.',
 			'home.guideTooltip' => 'Cómo colocar el teléfono',
 			'home.advancedTooltip' => 'Avanzado',
 			'home.readiness.ready' => 'Todo listo · vigilante conectado',
@@ -535,13 +585,27 @@ extension on TranslationsEs {
 			'home.profiles.autoName' => ({required Object time}) => 'Auto ${time}',
 			'home.profiles.dialogTitle' => 'Guardar perfil',
 			'home.profiles.dialogHint' => 'Nombre (ej. Conductor)',
+			'home.player.emptyTitle' => 'Reproduce tu música aquí',
+			'home.player.emptySubtitle' => 'Agrega canciones de tu teléfono. CarAlign las reproduce con el retraso izquierdo/derecho aplicado, sin configurar nada más.',
+			'home.player.addMusic' => 'Agregar música',
+			'home.player.addMore' => 'Agregar más',
+			'home.player.queue' => 'Cola',
+			'home.player.clearQueue' => 'Vaciar cola',
+			'home.player.queueHint' => 'Toca una canción para reproducirla; desliza para quitarla.',
+			'home.player.unknownArtist' => 'Artista desconocido',
+			'home.player.play' => 'Reproducir',
+			'home.player.pause' => 'Pausa',
+			'home.player.next' => 'Siguiente',
+			'home.player.previous' => 'Anterior',
+			'home.player.time' => ({required Object position, required Object duration}) => '${position} / ${duration}',
+			'home.delay.applied' => ({required Object side, required Object ms}) => 'Aplicado al reproductor: ${side} +${ms} ms',
+			'home.delay.none' => 'Aún sin retraso. Haz la alineación automática.',
 			'advanced.title' => 'Avanzado',
 			'advanced.manual.title' => 'Ajuste manual',
 			'advanced.manual.subtitle' => 'Los cambios se aplican en vivo si la alineación está activa.',
 			'advanced.manual.difference' => ({required Object cm}) => '≈ ${cm} cm de diferencia',
 			'advanced.manual.delayLeft' => 'Retrasar izq.',
 			'advanced.manual.delayRight' => 'Retrasar der.',
-			'advanced.manual.startAlignment' => 'Iniciar alineación',
 			'advanced.demo.title' => 'Demostración',
 			'advanced.demo.description' => 'Va de 0 ms a un perfil con música sonando: se oye cómo el escenario se centra.',
 			'advanced.demo.needsProfile' => 'Guarda un perfil primero (alinea o usa "Guardar actual").',
@@ -561,6 +625,10 @@ extension on TranslationsEs {
 			'advanced.demo.stepOf' => ({required Object label, required Object k, required Object n}) => '${label}  (paso ${k} de ${n})',
 			'advanced.diagnostics.title' => 'Diagnóstico y compatibilidad',
 			'advanced.diagnostics.subtitle' => 'Qué soporta este teléfono y cómo prepararlo',
+			'advanced.capture.title' => 'Otras apps de música (avanzado)',
+			'advanced.capture.description' => 'En lugar del reproductor integrado, CarAlign puede capturar el audio de Tidal, Spotify y otras apps, retrasarlo y silenciar el original. Necesita un canal ADB o Shizuku en el teléfono (ver Diagnóstico).',
+			'advanced.capture.switchHint' => 'Retrasar el audio de otras apps en vez del reproductor integrado',
+			'advanced.capture.switchLabel' => 'Modo captura',
 			'diagnostics.title' => 'Diagnóstico',
 			'diagnostics.intro' => 'Qué soporta este teléfono. Si algo no funciona en otro móvil, copia el informe y compártelo.',
 			'diagnostics.loading' => 'Cargando…',
@@ -574,15 +642,15 @@ extension on TranslationsEs {
 			'diagnostics.muteWorks' => ({required Object detail}) => 'El canal para silenciar funciona en este teléfono.\n${detail}',
 			'diagnostics.muteFails' => ({required Object detail}) => 'El canal para silenciar NO funciona todavía.\n${detail}',
 			'diagnostics.limitationTitle' => 'Limitación importante',
-			'diagnostics.limitationBody' => 'Android no deja que una app normal silencie a otra. CarAlign necesita un canal de ADB para hacerlo: hay que activarlo con un ordenador (adb tcpip 5555) cada vez que se reinicia el teléfono, o usar Shizuku. Sin ese canal la app no silencia el audio original y no se activa.',
-			'diagnostics.setupTitle' => 'Preparar otro teléfono',
+			'diagnostics.limitationBody' => 'El reproductor integrado no necesita nada especial. El modo captura (retrasar otras apps de música) es distinto: Android no deja que una app normal silencie a otra, así que necesita un canal de ADB, que se activa con un ordenador (adb tcpip 5555) cada vez que se reinicia el teléfono, o Shizuku. Sin ese canal el modo captura no puede silenciar el audio original y no se activa.',
+			'diagnostics.setupTitle' => 'Preparar el modo captura en otro teléfono',
 			'diagnostics.step1' => 'Activa las opciones de desarrollador: Ajustes → Acerca del teléfono → toca 7 veces "Número de compilación".',
 			'diagnostics.step2' => 'En Opciones de desarrollador activa "Depuración USB".',
 			'diagnostics.step3' => 'Conecta el teléfono a un ordenador con ADB y ejecuta  adb tcpip 5555 . Hay que repetirlo cada vez que se reinicia el teléfono.',
 			'diagnostics.step4' => 'Abre CarAlign. Si aparece "¿Permitir depuración?", acéptalo y marca "Siempre permitir".',
 			'diagnostics.step5' => 'Pulsa "Probar silenciado". Si falla, mira el motivo: algunas marcas piden más ajustes (Xiaomi/Redmi/POCO: "Depuración USB (ajustes de seguridad)"; Samsung: desactivar el bloqueo de comandos por USB de Auto Blocker).',
 			'diagnostics.step6' => 'Pulsa "Ahorro de batería" y permite que CarAlign funcione sin restricciones, para que no la cierren en segundo plano.',
-			'diagnostics.footer' => 'Sin este canal la app no puede silenciar el audio original y se oiría doble.',
+			'diagnostics.footer' => 'Sin este canal el modo captura no puede silenciar el audio original y se oiría doble.',
 			'guard.adbInactiveNoShizuku' => 'El ADB por red no está activo. Tampoco hay Shizuku en ejecución: abre Shizuku y pulsa Iniciar (depuración inalámbrica), o conecta el cable y ejecuta adb tcpip 5555 desde un ordenador.',
 			'guard.adbFailedNoShizuku' => ({required Object error}) => 'No se pudo usar el ADB del teléfono: ${error}. Tampoco hay Shizuku en ejecución: abre Shizuku y pulsa Iniciar (depuración inalámbrica), o conecta el cable y ejecuta adb tcpip 5555 desde un ordenador.',
 			'guard.shizukuFailed' => ({required Object error}) => 'Shizuku está activo pero falló: ${error}',

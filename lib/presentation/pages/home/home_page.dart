@@ -6,16 +6,17 @@ import '../../../app/app_scope.dart';
 import '../../../i18n/strings.g.dart';
 import '../../controllers/auto_align_controller.dart';
 import '../../localization/domain_l10n.dart';
+import '../../widgets/readiness_banner.dart';
 import '../advanced/advanced_page.dart';
 import '../placement_guide/placement_guide_page.dart';
 import 'widgets/align_button.dart';
 import 'widgets/countdown_card.dart';
+import 'widgets/delay_chip.dart';
 import 'widgets/measuring_card.dart';
+import 'widgets/player_section.dart';
 import 'widgets/profiles_section.dart';
-import 'widgets/readiness_banner.dart';
 import 'widgets/result_card.dart';
 import 'widgets/save_profile_dialog.dart';
-import 'widgets/status_card.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -44,8 +45,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   void _showNotice(String message) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message), duration: const Duration(seconds: 12), showCloseIcon: true));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message), duration: const Duration(seconds: 12), showCloseIcon: true));
   }
 
   @override
@@ -64,17 +66,18 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Future<void> _align() async {
     final deps = AppScope.of(context);
     if (!deps.alignment.hidePlacementGuide) {
-      final answer = await Navigator.of(context).push<({bool start, bool hide})>(
-        MaterialPageRoute(builder: (_) => const PlacementGuidePage(firstRun: true)),
-      );
+      final answer = await Navigator.of(
+        context,
+      ).push<({bool start, bool hide})>(MaterialPageRoute(builder: (_) => const PlacementGuidePage(firstRun: true)));
       if (answer == null || !answer.start || !mounted) return;
       if (answer.hide) await deps.alignment.setHidePlacementGuide(true);
     }
     await deps.autoAlign.start();
   }
 
-  void _openGuide() => Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) => PlacementGuidePage(hideGuide: AppScope.of(context).alignment.hidePlacementGuide)));
+  void _openGuide() => Navigator.of(context).push(
+    MaterialPageRoute(builder: (_) => PlacementGuidePage(hideGuide: AppScope.of(context).alignment.hidePlacementGuide)),
+  );
 
   void _openAdvanced() => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AdvancedPage()));
 
@@ -88,11 +91,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     final deps = AppScope.of(context);
     return ListenableBuilder(
-      listenable: Listenable.merge([deps.status, deps.alignment, deps.autoAlign]),
+      listenable: Listenable.merge([deps.status, deps.alignment, deps.autoAlign, deps.player]),
       builder: (context, _) {
         final auto = deps.autoAlign;
         final alignment = deps.alignment;
-        final hasAlignment = alignment.active || alignment.hasDelay;
         return Scaffold(
           appBar: AppBar(
             title: Text(t.appName, style: const TextStyle(fontWeight: FontWeight.w700)),
@@ -114,9 +116,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           body: ListView(
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 32),
             children: [
-              ReadinessBanner(status: deps.status),
-              const SizedBox(height: 16),
-              ..._mainSection(auto, hasAlignment, deps),
+              ReadinessBanner(status: deps.status, showGuard: alignment.captureMode),
+              const SizedBox(height: 8),
+              ..._mainSection(auto, deps),
               const SizedBox(height: 28),
               ProfilesSection(alignment: alignment, onSave: _saveProfile),
             ],
@@ -126,7 +128,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     );
   }
 
-  List<Widget> _mainSection(AutoAlignController auto, bool hasAlignment, AppDependencies deps) {
+  List<Widget> _mainSection(AutoAlignController auto, AppDependencies deps) {
     switch (auto.phase) {
       case AutoAlignPhase.countdown:
         return [CountdownCard(secondsLeft: auto.secondsLeft)];
@@ -135,10 +137,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       case AutoAlignPhase.idle:
       case AutoAlignPhase.done:
         return [
-          if (hasAlignment) StatusCard(alignment: deps.alignment),
-          if (hasAlignment) const SizedBox(height: 12),
+          PlayerSection(player: deps.player),
+          const SizedBox(height: 20),
+          DelayChip(alignment: deps.alignment),
+          const SizedBox(height: 12),
           AlignButton(
-            alreadyAligned: auto.phase == AutoAlignPhase.done || hasAlignment,
+            alreadyAligned: auto.phase == AutoAlignPhase.done || deps.alignment.hasDelay,
             onPressed: auto.busy ? null : _align,
           ),
           if (auto.phase == AutoAlignPhase.done && auto.result != null) ...[

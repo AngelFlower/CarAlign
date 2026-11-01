@@ -31,8 +31,8 @@ class ResultCard extends StatelessWidget {
     final headline = delay == null
         ? t.home.result.nothingApplied
         : delay.side == ChannelSide.left
-            ? t.home.result.delayLeft(ms: formatMs(delay.milliseconds))
-            : t.home.result.delayRight(ms: formatMs(delay.milliseconds));
+        ? t.home.result.delayLeft(ms: formatMs(delay.milliseconds))
+        : t.home.result.delayRight(ms: formatMs(delay.milliseconds));
     final sourceLine = r.source.measuredLine;
     final messages = [for (final m in r.messages) m.localized];
     return Container(
@@ -42,45 +42,59 @@ class ResultCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: color, width: 2),
       ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(children: [
-          Icon(icon, color: color, size: 32),
-          const SizedBox(width: 10),
-          Expanded(child: Text(headline, style: text.titleLarge?.copyWith(fontWeight: FontWeight.w700))),
-        ]),
-        const SizedBox(height: 4),
-        if (sourceLine.isNotEmpty) Text(sourceLine, style: text.bodyLarge?.copyWith(color: colors.onSurfaceVariant)),
-        if (!r.apply || r.status != ResultStatus.ok)
-          for (final m in messages)
-            Padding(padding: const EdgeInsets.only(top: 6), child: Text('• $m', style: text.bodyLarge)),
-        Theme(
-          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-          child: ExpansionTile(
-            tilePadding: EdgeInsets.zero,
-            childrenPadding: const EdgeInsets.only(bottom: 12),
-            expandedCrossAxisAlignment: CrossAxisAlignment.start,
-            title: Text(t.home.result.details),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
             children: [
-              if (r.apply)
-                _DetailLine(t.home.result.verified(
-                  residual: r.residualUs.toStringAsFixed(0),
-                  sigma: r.sigmaUs.toStringAsFixed(0),
-                  valid: r.validRepetitions,
-                  reps: r.repetitions,
-                  band: r.band?.label ?? '?',
-                )),
-              if (r.status == ResultStatus.ok)
-                for (final m in messages) _DetailLine('• $m'),
-              if (r.bandDeltasMs != null) _DetailLine(_bandsLine(r.bandDeltasMs!)),
-              _DetailLine(r.source.raw.isEmpty
-                  ? t.home.result.output(name: r.source.name)
-                  : t.home.result.outputRaw(name: r.source.name, raw: r.source.raw)),
-              _DetailLine(t.home.result.microphone(name: r.inputDevice)),
-              _DetailLine(t.home.result.noise(db: r.noiseDbfs.toStringAsFixed(0))),
+              Icon(icon, color: color, size: 32),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(headline, style: text.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
+              ),
             ],
           ),
-        ),
-      ]),
+          const SizedBox(height: 4),
+          if (sourceLine.isNotEmpty) Text(sourceLine, style: text.bodyLarge?.copyWith(color: colors.onSurfaceVariant)),
+          if (!r.apply || r.status != ResultStatus.ok)
+            for (final m in messages)
+              Padding(
+                padding: const EdgeInsets.only(top: 6),
+                child: Text('• $m', style: text.bodyLarge),
+              ),
+          Theme(
+            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+            child: ExpansionTile(
+              tilePadding: EdgeInsets.zero,
+              childrenPadding: const EdgeInsets.only(bottom: 12),
+              expandedCrossAxisAlignment: CrossAxisAlignment.start,
+              title: Text(t.home.result.details),
+              children: [
+                if (r.apply)
+                  _DetailLine(
+                    t.home.result.verified(
+                      residual: r.residualUs.toStringAsFixed(0),
+                      sigma: r.sigmaUs.toStringAsFixed(0),
+                      valid: r.validRepetitions,
+                      reps: r.repetitions,
+                      band: r.band?.label ?? '?',
+                    ),
+                  ),
+                if (r.status == ResultStatus.ok)
+                  for (final m in messages) _DetailLine('• $m'),
+                if (r.bandDeltasMs != null) _DetailLine(_bandsLine(r.bandDeltasMs!)),
+                _DetailLine(
+                  r.source.raw.isEmpty
+                      ? t.home.result.output(name: r.source.name)
+                      : t.home.result.outputRaw(name: r.source.name, raw: r.source.raw),
+                ),
+                _DetailLine(t.home.result.microphone(name: r.inputDevice)),
+                _DetailLine(t.home.result.noise(db: r.noiseDbfs.toStringAsFixed(0))),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -94,8 +108,10 @@ class _DetailLine extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 4),
-      child: Text(text,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant)),
+      child: Text(
+        text,
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+      ),
     );
   }
 }

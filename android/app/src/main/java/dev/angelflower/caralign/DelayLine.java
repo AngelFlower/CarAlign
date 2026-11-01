@@ -6,10 +6,10 @@ package dev.angelflower.caralign;
  * Switching channel goes through a delay of 0 first.
  */
 public class DelayLine {
-    public static final int MAX_SAMPLES = 480; // 10 ms at 48 kHz
+    public static final int MAX_SAMPLES = 1920; // 10 ms at 192 kHz (the capture path never goes above 480)
     static final float DEFAULT_RATE = 0.05f;   // delay samples per audio sample (1 ms over 20 ms)
 
-    private static final int SIZE = 1024, MASK = SIZE - 1;
+    private static final int SIZE = 4096, MASK = SIZE - 1;
 
     private static final class Cmd {
         final int channel, samples;
@@ -38,9 +38,14 @@ public class DelayLine {
         pending = new Cmd(delayLeft ? 0 : 1, clamp(samples), DEFAULT_RATE);
     }
 
-    /** Linear ramp to `samples` over `seconds` seconds (demo). */
+    /** Linear ramp to `samples` over `seconds` seconds (demo), for a stream at 48 kHz. */
     public void ramp(boolean delayLeft, int samples, double seconds) {
-        float r = (float) Math.max(1e-6, Math.abs(clamp(samples) - cur) / Math.max(seconds, 0.01) / 48000.0);
+        ramp(delayLeft, samples, seconds, 48000);
+    }
+
+    /** Linear ramp to `samples` over `seconds` seconds for a stream at `sampleRate` Hz. */
+    public void ramp(boolean delayLeft, int samples, double seconds, int sampleRate) {
+        float r = (float) Math.max(1e-6, Math.abs(clamp(samples) - cur) / Math.max(seconds, 0.01) / sampleRate);
         pending = new Cmd(delayLeft ? 0 : 1, clamp(samples), Math.min(r, 1f));
     }
 

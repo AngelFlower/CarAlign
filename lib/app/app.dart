@@ -15,11 +15,12 @@ class CarAlignApp extends StatefulWidget {
 
 class _CarAlignAppState extends State<CarAlignApp> {
   final _messenger = GlobalKey<ScaffoldMessengerState>();
-  late final AppDependencies _dependencies = AppDependencies(onDemoNeedsGuard: _showDemoNeedsGuard);
+  late final AppDependencies _dependencies = AppDependencies(onMessage: _showMessage);
 
-  void _showDemoNeedsGuard() {
-    _messenger.currentState?.showSnackBar(SnackBar(
-        content: Text(t.notice.demoNeedsGuard), duration: const Duration(seconds: 12), showCloseIcon: true));
+  void _showMessage(String message) {
+    _messenger.currentState?.showSnackBar(
+      SnackBar(content: Text(message), duration: const Duration(seconds: 12), showCloseIcon: true),
+    );
   }
 
   @override

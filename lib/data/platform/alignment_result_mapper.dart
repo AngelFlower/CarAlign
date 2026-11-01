@@ -5,12 +5,7 @@ import '../../domain/entities/audio_source.dart';
 class AlignmentResultMapper {
   const AlignmentResultMapper._();
 
-  static const _bandKeys = {
-    'broad': Band.broad,
-    'low': Band.low,
-    'mid': Band.mid,
-    'high': Band.high,
-  };
+  static const _bandKeys = {'broad': Band.broad, 'low': Band.low, 'mid': Band.mid, 'high': Band.high};
 
   static AlignmentResult fromJson(Map<String, dynamic> json) {
     final bandDeltas = json['bandsMs'] as Map<String, dynamic>?;

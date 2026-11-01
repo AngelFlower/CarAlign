@@ -8,6 +8,7 @@ class SharedPrefsSettingsRepository implements SettingsRepository {
   static const _delayKey = 'delayMs';
   static const _leftKey = 'left';
   static const _hideGuideKey = 'hideGuide';
+  static const _captureModeKey = 'captureMode';
 
   @override
   Future<DelaySetting?> loadDelay() async {
@@ -32,4 +33,11 @@ class SharedPrefsSettingsRepository implements SettingsRepository {
   @override
   Future<void> saveHidePlacementGuide(bool hide) async =>
       (await SharedPreferences.getInstance()).setBool(_hideGuideKey, hide);
+
+  @override
+  Future<bool> loadCaptureMode() async => (await SharedPreferences.getInstance()).getBool(_captureModeKey) ?? false;
+
+  @override
+  Future<void> saveCaptureMode(bool enabled) async =>
+      (await SharedPreferences.getInstance()).setBool(_captureModeKey, enabled);
 }

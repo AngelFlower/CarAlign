@@ -11,8 +11,15 @@ void main() {
     final session = DemoSession();
     final frames = <DemoFrame>[];
     final target = const DelaySetting(1.2, ChannelSide.left);
-    await for (final f in RunDemo(engine)(target, session,
-        loop: false, seconds: 3, steps: 6, engineActive: true)) {
+    await for (final f in RunDemo(engine, engine)(
+      target,
+      session,
+      loop: false,
+      seconds: 3,
+      steps: 6,
+      viaCapture: true,
+      engineActive: true,
+    )) {
       frames.add(f);
       if (f.stage == DemoStage.centering && f.step == 2) session.stop();
     }

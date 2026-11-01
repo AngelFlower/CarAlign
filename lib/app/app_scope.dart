@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 
 import '../data/platform/method_channel_audio_engine.dart';
 import '../data/storage/shared_prefs_profile_repository.dart';
+import '../data/storage/shared_prefs_queue_repository.dart';
 import '../data/storage/shared_prefs_settings_repository.dart';
 import '../domain/repositories/diagnostics_repository.dart';
 import '../domain/usecases/apply_alignment.dart';
@@ -10,16 +11,19 @@ import '../domain/usecases/run_demo.dart';
 import '../presentation/controllers/alignment_controller.dart';
 import '../presentation/controllers/auto_align_controller.dart';
 import '../presentation/controllers/demo_controller.dart';
+import '../presentation/controllers/player_controller.dart';
 import '../presentation/controllers/system_status_controller.dart';
 
 /// Wires the layers together once and exposes the controllers to the widget tree.
 class AppDependencies {
-  AppDependencies({required void Function() onDemoNeedsGuard}) {
+  AppDependencies({required void Function(String message) onMessage}) {
     final engine = MethodChannelAudioEngine();
     diagnostics = engine;
     status = SystemStatusController(engine);
+    player = PlayerController(player: engine, queue: SharedPrefsQueueRepository());
     alignment = AlignmentController(
       engine: engine,
+      player: engine,
       profiles: SharedPrefsProfileRepository(),
       settings: SharedPrefsSettingsRepository(),
       status: status,
@@ -31,15 +35,17 @@ class AppDependencies {
       status: status,
     );
     demo = DemoController(
-      run: RunDemo(engine),
+      run: RunDemo(engine, engine),
       alignment: alignment,
+      player: player,
       status: status,
-      onNeedsGuard: onDemoNeedsGuard,
+      onMessage: onMessage,
     );
   }
 
   late final DiagnosticsRepository diagnostics;
   late final SystemStatusController status;
+  late final PlayerController player;
   late final AlignmentController alignment;
   late final AutoAlignController autoAlign;
   late final DemoController demo;
@@ -48,6 +54,7 @@ class AppDependencies {
     demo.dispose();
     autoAlign.dispose();
     alignment.dispose();
+    player.dispose();
     status.dispose();
   }
 }

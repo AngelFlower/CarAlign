@@ -43,8 +43,10 @@ class _PlacementGuidePageState extends State<PlacementGuidePage> {
             const SizedBox(height: 8),
             const CarChecklist(),
             const SizedBox(height: 16),
-            Text(widget.firstRun ? tr.firstRunInfo : tr.info,
-                style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
+            Text(
+              widget.firstRun ? tr.firstRunInfo : tr.info,
+              style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+            ),
             const SizedBox(height: 12),
             if (widget.firstRun) ...[
               CheckboxListTile(

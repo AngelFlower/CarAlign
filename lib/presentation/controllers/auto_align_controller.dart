@@ -19,10 +19,10 @@ class AutoAlignController extends ChangeNotifier {
     required ApplyAlignment apply,
     required AlignmentController alignment,
     required SystemStatusController status,
-  })  : _run = run,
-        _apply = apply,
-        _alignment = alignment,
-        _status = status;
+  }) : _run = run,
+       _apply = apply,
+       _alignment = alignment,
+       _status = status;
 
   final RunAutoAlignment _run;
   final ApplyAlignment _apply;
@@ -87,8 +87,9 @@ class AutoAlignController extends ChangeNotifier {
     final now = DateTime.now();
     final time = '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
     _alignment.adopt(delay, saveAs: t.home.profiles.autoName(time: time));
-    if (_status.guard.alive) {
-      await _apply(result, delay);
+    final viaCapture = _alignment.captureMode && _status.guard.alive;
+    if (viaCapture || result.wasPlaying) {
+      await _apply(result, delay, viaCapture: viaCapture);
       await _status.refreshCapture();
     }
   }

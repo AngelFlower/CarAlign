@@ -7,12 +7,15 @@ import '../../domain/entities/channel_side.dart';
 import '../../domain/entities/delay_setting.dart';
 import '../../domain/entities/guard_status.dart';
 import '../../domain/entities/measurement.dart';
+import '../../domain/entities/player_snapshot.dart';
+import '../../domain/entities/track.dart';
 import '../../domain/repositories/audio_engine.dart';
 import '../../domain/repositories/diagnostics_repository.dart';
+import '../../domain/repositories/local_player.dart';
 import 'alignment_result_mapper.dart';
 
 /// Talks to the Android side over the `caralign` method channel.
-class MethodChannelAudioEngine implements AudioEngine, DiagnosticsRepository {
+class MethodChannelAudioEngine implements AudioEngine, DiagnosticsRepository, LocalPlayer {
   MethodChannelAudioEngine([MethodChannel? channel]) : _channel = channel ?? const MethodChannel('caralign');
 
   final MethodChannel _channel;
@@ -105,4 +108,58 @@ class MethodChannelAudioEngine implements AudioEngine, DiagnosticsRepository {
 
   @override
   Future<void> openBatterySettings() => _channel.invokeMethod('batteryExempt');
+
+  // ---- built-in player ----
+
+  @override
+  Future<List<Track>> pickTracks() async {
+    final picked = await _channel.invokeMethod<List<dynamic>>('pickAudio') ?? const [];
+    return [for (final m in picked) Track.fromJson(m as Map<dynamic, dynamic>)];
+  }
+
+  List<Map<String, dynamic>> _trackArgs(List<Track> tracks) => [for (final t in tracks) t.toJson()];
+
+  @override
+  Future<void> add(List<Track> tracks) => _channel.invokeMethod('playerAdd', _trackArgs(tracks));
+
+  @override
+  Future<void> restore(List<Track> tracks) => _channel.invokeMethod('playerRestore', _trackArgs(tracks));
+
+  @override
+  Future<void> remove(int index) => _channel.invokeMethod('playerRemove', index);
+
+  @override
+  Future<void> clear() => _channel.invokeMethod('playerClear');
+
+  @override
+  Future<void> playIndex(int index) => _channel.invokeMethod('playerPlayIndex', index);
+
+  @override
+  Future<void> togglePlay() => _channel.invokeMethod('playerToggle');
+
+  @override
+  Future<void> next() => _channel.invokeMethod('playerNext');
+
+  @override
+  Future<void> previous() => _channel.invokeMethod('playerPrevious');
+
+  @override
+  Future<void> seekTo(int positionMs) => _channel.invokeMethod('playerSeek', positionMs);
+
+  @override
+  Future<PlayerSnapshot> snapshot() async {
+    final s = await _channel.invokeMethod<Map<dynamic, dynamic>>('playerState') ?? const {};
+    return PlayerSnapshot(
+      connected: s['connected'] == true,
+      playing: s['playing'] == true,
+      index: (s['index'] as num? ?? 0).toInt(),
+      positionMs: (s['positionMs'] as num? ?? 0).toInt(),
+      durationMs: (s['durationMs'] as num? ?? 0).toInt(),
+      queueSize: (s['queueSize'] as num? ?? 0).toInt(),
+    );
+  }
+
+  @override
+  Future<void> setPlayerDelay(DelaySetting delay, {double? rampSeconds}) =>
+      _channel.invokeMethod('playerSetDelay', {..._delayArgs(delay), if (rampSeconds != null) 'seconds': rampSeconds});
 }

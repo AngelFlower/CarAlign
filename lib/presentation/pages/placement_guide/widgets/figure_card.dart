@@ -17,13 +17,17 @@ class FigureCard extends StatelessWidget {
         border: Border.all(color: theme.colorScheme.outlineVariant),
       ),
       padding: const EdgeInsets.fromLTRB(8, 8, 8, 12),
-      child: Column(children: [
-        AspectRatio(aspectRatio: 1.6, child: CustomPaint(painter: painter)),
-        const SizedBox(height: 6),
-        Text(caption,
+      child: Column(
+        children: [
+          AspectRatio(aspectRatio: 1.6, child: CustomPaint(painter: painter)),
+          const SizedBox(height: 6),
+          Text(
+            caption,
             textAlign: TextAlign.center,
-            style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
-      ]),
+            style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+          ),
+        ],
+      ),
     );
   }
 }

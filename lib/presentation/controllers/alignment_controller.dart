@@ -4,6 +4,7 @@ import '../../domain/entities/channel_side.dart';
 import '../../domain/entities/delay_setting.dart';
 import '../../domain/entities/profile.dart';
 import '../../domain/repositories/audio_engine.dart';
+import '../../domain/repositories/local_player.dart';
 import '../../domain/repositories/profile_repository.dart';
 import '../../domain/repositories/settings_repository.dart';
 import 'system_status_controller.dart';
@@ -12,17 +13,20 @@ import 'system_status_controller.dart';
 class AlignmentController extends ChangeNotifier {
   AlignmentController({
     required AudioEngine engine,
+    required LocalPlayer player,
     required ProfileRepository profiles,
     required SettingsRepository settings,
     required SystemStatusController status,
-  })  : _engine = engine,
-        _profiles = profiles,
-        _settings = settings,
-        _status = status {
+  }) : _engine = engine,
+       _player = player,
+       _profiles = profiles,
+       _settings = settings,
+       _status = status {
     _load();
   }
 
   final AudioEngine _engine;
+  final LocalPlayer _player;
   final ProfileRepository _profiles;
   final SettingsRepository _settings;
   final SystemStatusController _status;
@@ -33,6 +37,9 @@ class AlignmentController extends ChangeNotifier {
   /// True once a delay has been saved or adjusted, so the home screen can show the status card.
   bool hasDelay = false;
   bool hidePlacementGuide = false;
+
+  /// Advanced mode: capture other music apps instead of using the built-in player.
+  bool captureMode = false;
   List<Profile> profiles = [];
 
   bool get active => _status.captureActive;
@@ -47,7 +54,9 @@ class AlignmentController extends ChangeNotifier {
     if (saved != null) {
       delay = saved;
       hasDelay = true;
+      await _player.setPlayerDelay(delay);
     }
+    captureMode = await _settings.loadCaptureMode();
     hidePlacementGuide = await _settings.loadHidePlacementGuide();
     _notify();
     await _status.refreshCapture();
@@ -59,9 +68,18 @@ class AlignmentController extends ChangeNotifier {
     _notify();
   }
 
+  Future<void> setCaptureMode(bool enabled) async {
+    captureMode = enabled;
+    await _settings.saveCaptureMode(enabled);
+    if (!enabled && active) await _engine.stop();
+    _notify();
+    await _status.refreshCapture();
+  }
+
   void _commit() {
     hasDelay = true;
     _settings.saveDelay(delay);
+    _player.setPlayerDelay(delay);
     if (active) _engine.setDelay(delay);
     _notify();
   }
@@ -91,6 +109,7 @@ class AlignmentController extends ChangeNotifier {
     delay = value.copyWith(milliseconds: DelaySetting.snap(value.milliseconds));
     hasDelay = true;
     _settings.saveDelay(delay);
+    _player.setPlayerDelay(delay);
     if (saveAs != null) profiles.add(Profile(saveAs, delay));
     _profiles.save(profiles);
     _notify();

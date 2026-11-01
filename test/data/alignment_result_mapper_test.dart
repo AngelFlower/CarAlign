@@ -57,8 +57,7 @@ void main() {
   });
 
   test('right-channel delay', () {
-    final r = AlignmentResultMapper.fromJson(
-        {'status': 'OK', 'apply': true, 'delayLeftMs': 0, 'delayRightMs': 0.8});
+    final r = AlignmentResultMapper.fromJson({'status': 'OK', 'apply': true, 'delayLeftMs': 0, 'delayRightMs': 0.8});
     expect(r.delay!.side, ChannelSide.right);
     expect(r.delay!.milliseconds, 0.8);
   });

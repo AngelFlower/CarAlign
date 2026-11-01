@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 
-import '../../../../domain/entities/guard_status.dart';
-import '../../../../i18n/strings.g.dart';
-import '../../../controllers/system_status_controller.dart';
-import '../../../localization/domain_l10n.dart';
-import '../../../widgets/info_banner.dart';
+import '../../domain/entities/guard_status.dart';
+import '../../i18n/strings.g.dart';
+import '../controllers/system_status_controller.dart';
+import '../localization/domain_l10n.dart';
+import 'info_banner.dart';
 
 /// Readiness: one discreet line when all is well; a prominent banner only when something needs doing.
+/// Without [showGuard] only the microphone permission is checked.
 class ReadinessBanner extends StatelessWidget {
-  const ReadinessBanner({super.key, required this.status});
+  const ReadinessBanner({super.key, required this.status, this.showGuard = true});
 
   final SystemStatusController status;
+
+  /// The guard only matters in capture mode; the microphone permission always does.
+  final bool showGuard;
 
   @override
   Widget build(BuildContext context) {
@@ -30,12 +34,17 @@ class ReadinessBanner extends StatelessWidget {
         onAction: status.requestPermissions,
       );
     }
+    if (!showGuard) return const SizedBox.shrink();
     if (guard.alive) {
-      return Row(children: [
-        Icon(Icons.check_circle, size: 20, color: colors.primary),
-        const SizedBox(width: 8),
-        Expanded(child: Text(tr.ready, style: text.bodyLarge?.copyWith(color: colors.onSurfaceVariant))),
-      ]);
+      return Row(
+        children: [
+          Icon(Icons.check_circle, size: 20, color: colors.primary),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(tr.ready, style: text.bodyLarge?.copyWith(color: colors.onSurfaceVariant)),
+          ),
+        ],
+      );
     }
     if (guard.isConnecting) {
       return InfoBanner(

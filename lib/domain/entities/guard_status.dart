@@ -10,8 +10,7 @@ class GuardDetail {
   final String argument;
 
   @override
-  bool operator ==(Object other) =>
-      other is GuardDetail && other.code == code && other.argument == argument;
+  bool operator ==(Object other) => other is GuardDetail && other.code == code && other.argument == argument;
 
   @override
   int get hashCode => Object.hash(code, argument);

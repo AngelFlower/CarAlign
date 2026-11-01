@@ -17,7 +17,10 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 
 public class MainActivity extends FlutterActivity {
-    private static final int REQ_PROJECTION = 1;
+    private static final int REQ_PROJECTION = 1, REQ_PICK_AUDIO = 3;
+
+    /** Result of an open "pick audio files" request, answered in onActivityResult. */
+    private MethodChannel.Result pendingPick;
 
     private float pendingDelayMs;
     private boolean pendingLeft = true;
@@ -141,14 +144,79 @@ public class MainActivity extends FlutterActivity {
             case "guardAlive":
                 result.success(GuardManager.alive(this));
                 break;
+            case "pickAudio":
+                if (pendingPick != null) {
+                    result.success(new java.util.ArrayList<>());
+                    break;
+                }
+                pendingPick = result;
+                Intent pick = new Intent(Intent.ACTION_OPEN_DOCUMENT)
+                        .addCategory(Intent.CATEGORY_OPENABLE)
+                        .setType("audio/*")
+                        .putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+                        .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+                startActivityForResult(pick, REQ_PICK_AUDIO);
+                break;
+            case "playerAdd":
+                LocalPlayerBridge.add(this, tracksArg(call));
+                result.success(null);
+                break;
+            case "playerRestore":
+                LocalPlayerBridge.restore(this, tracksArg(call));
+                result.success(null);
+                break;
+            case "playerRemove":
+                LocalPlayerBridge.remove(this, ((Number) call.arguments).intValue());
+                result.success(null);
+                break;
+            case "playerClear":
+                LocalPlayerBridge.clear(this);
+                result.success(null);
+                break;
+            case "playerPlayIndex":
+                LocalPlayerBridge.playIndex(this, ((Number) call.arguments).intValue());
+                result.success(null);
+                break;
+            case "playerToggle":
+                LocalPlayerBridge.toggle(this);
+                result.success(null);
+                break;
+            case "playerNext":
+                LocalPlayerBridge.next(this);
+                result.success(null);
+                break;
+            case "playerPrevious":
+                LocalPlayerBridge.previous(this);
+                result.success(null);
+                break;
+            case "playerSeek":
+                LocalPlayerBridge.seek(this, ((Number) call.arguments).longValue());
+                result.success(null);
+                break;
+            case "playerState":
+                result.success(LocalPlayerBridge.state());
+                break;
+            case "playerSetDelay": {
+                Number secs = call.argument("seconds");
+                PlayerDelay.set(((Number) call.argument("delayMs")).floatValue(),
+                        Boolean.TRUE.equals(call.argument("left")), secs == null ? 0 : secs.doubleValue());
+                result.success(null);
+                break;
+            }
             default:
                 result.notImplemented();
         }
     }
 
+    @SuppressWarnings("unchecked")
+    private static java.util.List<Map<String, Object>> tracksArg(MethodCall call) {
+        return (java.util.List<Map<String, Object>>) call.arguments;
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
+        LocalPlayerBridge.connect(getApplicationContext());
         GuardManager.startLease(getApplicationContext()); // while the app is visible, the guard stays alive
         GuardManager.ensure(getApplicationContext());
     }
@@ -162,6 +230,26 @@ public class MainActivity extends FlutterActivity {
     @Override
     protected void onActivityResult(int req, int res, Intent data) {
         super.onActivityResult(req, res, data);
+        if (req == REQ_PICK_AUDIO) {
+            MethodChannel.Result r = pendingPick;
+            pendingPick = null;
+            if (r == null) return;
+            if (res != RESULT_OK || data == null) {
+                r.success(new java.util.ArrayList<>());
+                return;
+            }
+            final java.util.List<android.net.Uri> uris = new java.util.ArrayList<>();
+            if (data.getClipData() != null) {
+                for (int i = 0; i < data.getClipData().getItemCount(); i++) uris.add(data.getClipData().getItemAt(i).getUri());
+            } else if (data.getData() != null) {
+                uris.add(data.getData());
+            }
+            new Thread(() -> {
+                java.util.List<Map<String, Object>> out = AudioFiles.describe(getApplicationContext(), uris);
+                runOnUiThread(() -> r.success(out));
+            }).start();
+            return;
+        }
         if (req == REQ_PROJECTION && res == RESULT_OK) {
             startForegroundService(new Intent(this, CaptureService.class)
                     .putExtra("code", res)

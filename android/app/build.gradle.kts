@@ -58,6 +58,9 @@ android {
 }
 
 dependencies {
+    // Built-in local player: ExoPlayer plus a media session (notification, lock screen, car/Bluetooth controls)
+    implementation("androidx.media3:media3-exoplayer:1.10.1")
+    implementation("androidx.media3:media3-session:1.10.1")
     // ADB over loopback: the app starts and stops the playback guard (see GuardManager)
     implementation("dev.mobile:dadb:1.2.10")
     // Second privileged channel (after a reboot): Shizuku, which can start from the phone alone

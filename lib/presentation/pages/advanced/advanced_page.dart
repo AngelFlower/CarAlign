@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../app/app_scope.dart';
 import '../../../i18n/strings.g.dart';
 import '../diagnostics/diagnostics_page.dart';
+import 'widgets/capture_mode_section.dart';
 import 'widgets/demo_section.dart';
 import 'widgets/manual_adjust_section.dart';
 
@@ -24,14 +25,16 @@ class AdvancedPage extends StatelessWidget {
             const SizedBox(height: 28),
             DemoSection(demo: deps.demo),
             const SizedBox(height: 28),
+            CaptureModeSection(alignment: deps.alignment, status: deps.status),
+            const SizedBox(height: 28),
             Card(
               child: ListTile(
                 leading: const Icon(Icons.fact_check_outlined),
                 title: Text(t.advanced.diagnostics.title),
                 subtitle: Text(t.advanced.diagnostics.subtitle),
                 trailing: const Icon(Icons.chevron_right),
-                onTap: () => Navigator.of(context)
-                    .push(MaterialPageRoute<void>(builder: (_) => const DiagnosticsPage())),
+                onTap: () =>
+                    Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const DiagnosticsPage())),
               ),
             ),
           ],

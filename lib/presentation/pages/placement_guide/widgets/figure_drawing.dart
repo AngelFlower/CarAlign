@@ -1,13 +1,26 @@
 import 'package:flutter/material.dart';
 
 /// Drawing helpers shared by the placement figures.
-void drawLabel(Canvas c, String s, Offset at, Color color,
-    {double size = 12, TextAlign align = TextAlign.center, bool bold = false, double maxW = 140}) {
+void drawLabel(
+  Canvas c,
+  String s,
+  Offset at,
+  Color color, {
+  double size = 12,
+  TextAlign align = TextAlign.center,
+  bool bold = false,
+  double maxW = 140,
+}) {
   final tp = TextPainter(
     text: TextSpan(
-        text: s,
-        style: TextStyle(
-            color: color, fontSize: size, fontWeight: bold ? FontWeight.w700 : FontWeight.w500, height: 1.15)),
+      text: s,
+      style: TextStyle(
+        color: color,
+        fontSize: size,
+        fontWeight: bold ? FontWeight.w700 : FontWeight.w500,
+        height: 1.15,
+      ),
+    ),
     textAlign: align,
     textDirection: TextDirection.ltr,
   )..layout(maxWidth: maxW);

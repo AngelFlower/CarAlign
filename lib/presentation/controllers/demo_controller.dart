@@ -4,7 +4,9 @@ import 'package:flutter/foundation.dart';
 
 import '../../domain/entities/profile.dart';
 import '../../domain/usecases/run_demo.dart';
+import '../../i18n/strings.g.dart';
 import 'alignment_controller.dart';
+import 'player_controller.dart';
 import 'system_status_controller.dart';
 
 /// Plays a profile in steps (0 ms → profile) so the user can hear the effect.
@@ -12,18 +14,21 @@ class DemoController extends ChangeNotifier {
   DemoController({
     required RunDemo run,
     required AlignmentController alignment,
+    required PlayerController player,
     required SystemStatusController status,
-    required this.onNeedsGuard,
-  })  : _run = run,
-        _alignment = alignment,
-        _status = status;
+    required this.onMessage,
+  }) : _run = run,
+       _alignment = alignment,
+       _player = player,
+       _status = status;
 
   final RunDemo _run;
   final AlignmentController _alignment;
+  final PlayerController _player;
   final SystemStatusController _status;
 
-  /// Called when the demo can't start because the guard is down.
-  final void Function() onNeedsGuard;
+  /// Called with a user-facing message when the demo can't start.
+  final void Function(String message) onMessage;
 
   DemoSession? _session;
   bool _disposed = false;
@@ -62,8 +67,13 @@ class DemoController extends ChangeNotifier {
 
   Future<void> play({required bool loop}) async {
     if (profiles.isEmpty || running) return;
-    if (!_status.guard.alive) {
-      onNeedsGuard();
+    final viaCapture = _alignment.captureMode;
+    if (viaCapture && !_status.guard.alive) {
+      onMessage(t.notice.demoNeedsGuard);
+      return;
+    }
+    if (!viaCapture && !_player.hasTracks) {
+      onMessage(t.notice.demoNeedsMusic);
       return;
     }
     final profile = profiles[selectedIndex];
@@ -79,6 +89,7 @@ class DemoController extends ChangeNotifier {
         loop: loop,
         seconds: seconds,
         steps: steps.round(),
+        viaCapture: viaCapture,
         engineActive: _status.captureActive,
       )) {
         frame = f;
