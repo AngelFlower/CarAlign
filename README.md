@@ -1,86 +1,92 @@
 # CarAlign
 
-Alinea en el tiempo los canales izquierdo y derecho del audio de un auto, sin DSP. Mide con el micrófono del teléfono la diferencia de llegada entre los dos lados y retrasa el canal que llega antes (del orden de 1 ms) para que el sonido se centre.
+**English** · [Español](README.es.md)
 
-Pensado para estéreos de fábrica con Android Auto o Bluetooth, donde no hay ajuste de retardo por altavoz.
+Aligns the timing of the left and right audio channels in a car, with no DSP. It measures with the phone's microphone how much later one side arrives than the other, then delays the channel that arrives first (on the order of 1 ms) so the sound centers on you.
+
+Built for factory stereos with Android Auto or Bluetooth, which have no per-speaker delay adjustment.
 
 <p align="center">
-  <img src="capturas/inicio.png" width="22%" alt="Inicio">
-  <img src="capturas/avanzado.png" width="22%" alt="Ajuste manual">
-  <img src="capturas/guia1.png" width="22%" alt="Guía de colocación">
-  <img src="capturas/guia2.png" width="22%" alt="Guía de colocación, pasos">
+  <img src="capturas/inicio.png" width="22%" alt="Home">
+  <img src="capturas/avanzado.png" width="22%" alt="Manual adjustment">
+  <img src="capturas/guia1.png" width="22%" alt="Placement guide">
+  <img src="capturas/guia2.png" width="22%" alt="Placement guide, steps">
 </p>
 
-## Por qué existe
+The screenshots show the Spanish interface; the app follows the phone's language (English and Spanish).
 
-En un auto el conductor no está en el centro: el altavoz izquierdo queda más cerca que el derecho, el sonido de ese lado llega antes y la imagen estéreo se corre hacia la puerta. Los procesadores de audio (DSP) lo corrigen con un retardo por canal, pero los estéreos de fábrica no lo traen. CarAlign aplica ese retardo desde el teléfono, que es lo que llega al estéreo por Android Auto o Bluetooth.
+## Why it exists
 
-Nació para un VW Vento con estéreo RCD, un amplificador Jensen JA4B y altavoces Infinity pasivos de 2 vías, y se probó ahí.
+In a car the driver doesn't sit in the middle: the left speaker is closer than the right one, so its sound arrives first and the stereo image drifts toward the door. Car audio processors (DSPs) fix this with a per-channel delay, but factory stereos don't have one. CarAlign applies that delay from the phone, which is what reaches the stereo over Android Auto or Bluetooth.
 
-## En qué se inspira
+It was built for a VW Vento with an RCD stereo, a Jensen JA4B amplifier and passive 2-way Infinity speakers, and tested there.
 
-No imita a una app en concreto. Junta ideas conocidas:
+## Inspiration
 
-- **Alineación de tiempo de los DSP de audio para auto**: el mismo ajuste, pero en el teléfono y solo con dos canales.
-- **Barrido sinusoidal exponencial** (método de Farina), usado en mediciones de acústica: da buena relación señal/ruido y permite medir tiempos de llegada de microsegundos, con correlación cruzada e interpolación parabólica.
-- **Captura de audio de Android (AudioPlaybackCapture) y apps que usan ADB o Shizuku** para hacer lo que Android no deja a una app normal. Por eso existe la limitación de más abajo.
-- Librerías: [dadb](https://github.com/mobile-dev-inc/dadb) (ADB desde la propia app) y [Shizuku](https://shizuku.rikka.app/).
+It doesn't imitate any particular app. It combines well-known ideas:
 
-## Qué esperar
+- **Time alignment in car audio DSPs**: the same adjustment, but on the phone and with only two channels.
+- **Exponential sine sweep** (Farina's method), used in acoustic measurements: good signal-to-noise ratio, and arrival times can be measured to the microsecond using cross-correlation and parabolic interpolation.
+- **Android audio capture (AudioPlaybackCapture) and apps that use ADB or Shizuku** to do what Android doesn't allow a regular app to do. That is why the limitation below exists.
+- Libraries: [dadb](https://github.com/mobile-dev-inc/dadb) (ADB from inside the app) and [Shizuku](https://shizuku.rikka.app/).
 
-- **Efecto**: la voz y el escenario se centran frente a ti. En mi auto, la diferencia medida fue de alrededor de 1.1 a 1.3 ms (el lado derecho llegaba después, así que se retrasa el izquierdo), y a oído quedó mejor un poco por debajo de lo medido (~0.96 ms). Por eso hay ajuste manual: la medición es un buen punto de partida, no la última palabra.
-- **Con qué sistema**: el efecto es sutil y depende del auto. Si tu estéreo ya tiene alineación de tiempo, no lo necesitas.
-- **Latencia**: pasar el audio por la app suma entre ~90 y ~170 ms. Sirve para música; **no para ver video** (el sonido llegará tarde).
-- **Un solo valor**: con dos canales solo se alinea izquierda contra derecha. No ajusta cada altavoz por separado, ni agudos contra graves.
-- **Fader**: si los altavoces traseros están activos, el sonido puede parecer venir de atrás; conviene dejar el balance hacia el frente.
-- **Mediciones**: la colocación del teléfono importa (un centímetro cambia el resultado), así que se muestra una guía en la app y debe colocarse siempre igual.
-- **Estado de las pruebas**: lo medido en un auto real fue en un solo auto y un solo teléfono. Bluetooth, Spotify y otras marcas de teléfono no están comprobados en uso real.
+## What to expect
 
-## Cómo funciona
+- **Effect**: voices and the sound stage center in front of you. In my car the measured difference was about 1.1 to 1.3 ms (the right side arrived later, so the left is delayed), and by ear it sounded best slightly below the measurement (~0.96 ms). That's why there is a manual adjustment: the measurement is a good starting point, not the last word.
+- **Which systems**: the effect is subtle and depends on the car. If your stereo already has time alignment, you don't need this.
+- **Latency**: routing the audio through the app adds about 90 to 170 ms. Fine for music; **not for watching video** (the sound will lag).
+- **A single value**: with two channels it only aligns left against right. It doesn't adjust each speaker separately, nor tweeters against woofers.
+- **Fader**: if the rear speakers are active, the sound can seem to come from behind; keep the fader toward the front.
+- **Measuring**: where you put the phone matters (one centimeter changes the result), so the app shows a guide and you should always place it the same way.
+- **Testing status**: what was measured in a real car was one car and one phone. Bluetooth, Spotify and other phone brands haven't been verified in real use.
 
-1. Captura el audio de la app de música (AudioPlaybackCapture).
-2. Retrasa un canal con una línea de retardo de pasos suaves.
-3. Lo reproduce y silencia el original.
-4. La alineación automática emite barridos, los graba con el micrófono y calcula la diferencia por correlación cruzada, en lazo cerrado (mide, aplica, verifica).
+## How it works
 
-## Limitación importante
+1. It captures the music app's audio (AudioPlaybackCapture).
+2. It delays one channel with a delay line that changes in smooth steps.
+3. It plays the result and mutes the original.
+4. Automatic alignment plays sweeps, records them with the microphone and computes the difference by cross-correlation, in a closed loop (measure, apply, verify).
 
-Android no permite que una app normal silencie a otra. Para silenciar el audio original CarAlign necesita un canal de shell (ADB):
+## Important limitation
 
-- Con un ordenador: `adb tcpip 5555` una vez cada vez que se reinicia el teléfono. Después la app se las arregla sola por loopback.
-- O con [Shizuku](https://shizuku.rikka.app/) (respaldo, sin probar a fondo).
+Android doesn't let a regular app mute another one. To mute the original audio CarAlign needs a shell channel (ADB):
 
-Sin ese canal la app no se activa (falla de forma segura: no silencia nada). Esto no se puede resolver solo con código, por eso no es una app de instalar y usar.
+- With a computer: `adb tcpip 5555`, once every time the phone restarts. After that the app handles the rest over loopback.
+- Or with [Shizuku](https://shizuku.rikka.app/) (fallback, not thoroughly tested).
 
-## Compatibilidad
+Without that channel the app doesn't start (it fails safe: nothing gets muted). This can't be solved with code alone, which is why it isn't an install-and-use app.
 
-- Android 10 o superior. Probada en emuladores Android 11, 14 y 16 y en un Pixel 6.
-- Sin probar: Android 10/12/13 reales y otras marcas (Xiaomi y Samsung pueden pedir ajustes extra de depuración USB).
-- Funciona con cualquier app que permita la captura de audio. Tidal y Spotify están en la lista conocida; las apps que bloquean la captura activan un freno de seguridad que devuelve el sonido.
-- En *Avanzado → Diagnóstico y compatibilidad* hay un informe copiable y un botón "Probar silenciado".
+## Compatibility
 
-## Compilar
+- Android 10 or later. Tested on Android 11, 14 and 16 emulators and on a Pixel 6.
+- Untested: real Android 10/12/13 devices and other brands (Xiaomi and Samsung may need extra USB debugging settings).
+- Works with any app that allows audio capture. Tidal and Spotify are on the known list; apps that block capture trigger a safety breaker that gives the sound back.
+- *Advanced → Diagnostics and compatibility* has a copyable report and a "Test muting" button.
+
+## Building
 
 ```
 flutter pub get
-flutter build apk --release        # o: flutter build appbundle --release
+flutter build apk --release        # or: flutter build appbundle --release
 ```
 
-Para firmar, crea `android/key.properties` (no se sube al repo):
+To sign, create `android/key.properties` (not committed):
 
 ```
-storeFile=/ruta/a/tu.jks
+storeFile=/path/to/your.jks
 storePassword=...
 keyAlias=upload
 keyPassword=...
 ```
 
-Pruebas de simulación (Java, sin teléfono): `tools/jvm_tests/run.sh`.
+Tests: `flutter test` (Dart) and `tools/jvm_tests/run.sh` (Java simulations, no phone needed).
 
-## Privacidad
+The app's texts live in `lib/i18n/` (English and Spanish, using [slang](https://pub.dev/packages/slang)); after editing them run `dart run slang`.
 
-Todo ocurre en el teléfono. No hay cuentas, anuncios ni análisis, y el audio y el micrófono no salen del dispositivo. Ver [PRIVACY.md](PRIVACY.md).
+## Privacy
 
-## Licencia
+Everything happens on the phone. No accounts, ads or analytics, and the audio and microphone never leave the device. See [PRIVACY.md](PRIVACY.md) (English and Spanish).
+
+## License
 
 MIT
