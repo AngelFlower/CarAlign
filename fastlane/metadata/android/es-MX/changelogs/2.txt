@@ -1,1 +1,1 @@
-Primera versión: alineación automática con el micrófono, ajuste manual, demostración y diagnóstico de compatibilidad.
+Primera versión: reproductor integrado con retardo por canal, alineación automática con micrófono, ajuste manual, demostración, perfiles, diagnóstico y un modo captura avanzado.

@@ -1,1 +1,1 @@
-Alinea en el tiempo el audio izquierdo y derecho de tu auto, sin DSP
+Reproductor que alinea en el tiempo el audio izquierdo y derecho del auto

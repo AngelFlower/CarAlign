@@ -1,0 +1,21 @@
+CarAlign is a music player that fixes something every factory car stereo gets wrong: the driver sits off-center, so the sound from the nearer speaker arrives first and the stage drifts toward the door.
+
+Add songs from your phone and play them in CarAlign. Run the automatic alignment: the phone's microphone measures how much earlier one side arrives (usually around 1 ms) and CarAlign delays that channel so the music centers in front of you. No setup, no special permissions.
+
+Built for factory stereos with Android Auto or Bluetooth that have no delay adjustment.
+
+What it does
+• Built-in player: queue, seek, notification and lock-screen controls.
+• Automatic closed-loop alignment: measure, apply and verify, with audible cues so you don't have to look at the screen.
+• Analysis by band (bass, mid, high), clock-drift correction and motion rejection using the gyroscope.
+• Manual fine adjustment in 0.02 ms steps, applied live while music plays.
+• Demo that steps the delay from 0 to your setting so you can hear the stage center.
+• Saved profiles (driver, passenger…).
+• Diagnostics report you can copy to share.
+
+Advanced: capture mode
+• Delay the audio of Tidal, Spotify or any app that allows audio capture, muting the original so you hear it once.
+• Safety breaker that gives the sound back if an app blocks capture.
+• Needs an ADB channel or Shizuku on the phone (enabled from a computer with adb tcpip 5555 after each reboot). The built-in player doesn't need any of this.
+
+No accounts, no ads, nothing leaves your phone. Open source (MIT).

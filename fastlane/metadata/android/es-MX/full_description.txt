@@ -1,13 +1,21 @@
-CarAlign mide con el micrófono del teléfono cuánto tarda el sonido de cada lado del auto en llegar a tu asiento y retrasa el canal adelantado (alrededor de 1 ms) para que la música se centre frente a ti.
+CarAlign es un reproductor de música que corrige algo en lo que fallan los estéreos de fábrica: el conductor no está en el centro, así que el sonido del altavoz más cercano llega primero y el escenario se corre hacia la puerta.
+
+Agrega canciones de tu teléfono y reprodúcelas en CarAlign. Haz la alineación automática: el micrófono del teléfono mide cuánto antes llega un lado (normalmente alrededor de 1 ms) y CarAlign retrasa ese canal para que la música se centre frente a ti. Sin configuración ni permisos especiales.
 
 Pensada para estéreos de fábrica con Android Auto o Bluetooth que no tienen ajuste de retardo.
 
-• Alineación automática en lazo cerrado: mide, aplica y verifica.
-• Ajuste manual fino y demostración paso a paso.
-• Funciona con apps de música que permiten la captura de audio, como Tidal y Spotify.
-• Freno de seguridad: si algo falla, devuelve el sonido original.
-• Sin cuentas, sin anuncios, sin enviar datos.
+Qué hace
+• Reproductor integrado: cola, barra de avance, notificación y controles en la pantalla de bloqueo.
+• Alineación automática en lazo cerrado: mide, aplica y verifica, con avisos sonoros para no tener que mirar la pantalla.
+• Análisis por bandas (graves, medios, agudos), corrección de deriva de reloj y descarte por movimiento con el giroscopio.
+• Ajuste manual fino en pasos de 0.02 ms, aplicado en vivo mientras suena la música.
+• Demostración que lleva el retardo de 0 a tu ajuste para que oigas cómo se centra el escenario.
+• Perfiles guardados (conductor, copiloto…).
+• Informe de diagnóstico que puedes copiar y compartir.
 
-REQUISITO IMPORTANTE: Android no deja que una app silencie a otra. CarAlign necesita un canal ADB (se activa una vez tras cada reinicio con un ordenador: adb tcpip 5555) o Shizuku. Sin eso no se activa.
+Avanzado: modo captura
+• Retrasa el audio de Tidal, Spotify o cualquier app que permita la captura de audio, silenciando el original para oírlo una sola vez.
+• Freno de seguridad que devuelve el sonido si una app bloquea la captura.
+• Necesita un canal ADB o Shizuku en el teléfono (se activa desde un ordenador con adb tcpip 5555 tras cada reinicio). El reproductor integrado no necesita nada de esto.
 
-La latencia extra es de ~90 a ~170 ms: sirve para música, no para ver video.
+Sin cuentas, sin anuncios, nada sale de tu teléfono. Código abierto (MIT).
