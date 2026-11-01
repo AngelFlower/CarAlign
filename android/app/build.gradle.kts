@@ -47,7 +47,7 @@ android {
 
     buildTypes {
         release {
-            // Sin key.properties se firma con la llave de depuración (solo para pruebas locales)
+            // Without key.properties the debug key signs the build (local testing only)
             signingConfig = if (keyProps.containsKey("storeFile"))
                 signingConfigs.getByName("release") else signingConfigs.getByName("debug")
             isMinifyEnabled = true
@@ -58,9 +58,9 @@ android {
 }
 
 dependencies {
-    // ADB en loopback: la app arranca y apaga el vigilante de Tidal (ver GuardManager)
+    // ADB over loopback: the app starts and stops the playback guard (see GuardManager)
     implementation("dev.mobile:dadb:1.2.10")
-    // Segundo canal privilegiado (tras un reinicio): Shizuku, que puede arrancar solo desde el telefono
+    // Second privileged channel (after a reboot): Shizuku, which can start from the phone alone
     implementation("dev.rikka.shizuku:api:13.1.5")
     implementation("dev.rikka.shizuku:provider:13.1.5")
 }

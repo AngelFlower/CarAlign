@@ -6,17 +6,17 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
-/** Registra giroscopio y acelerometro (~50 Hz) para saber si el telefono se movio durante la medicion. */
+/** Records the gyroscope and accelerometer (~50 Hz) to know whether the phone moved during the measurement. */
 final class MotionGate implements SensorEventListener {
-    // Umbrales gruesos: solo descartan movimiento claro (a ajustar con datos del coche)
+    // Coarse thresholds: only clear motion is discarded (to be tuned with in-car data)
     static final double MAX_ROT = 0.35;   // rad/s
-    static final double MAX_ACC = 1.5;    // m/s2 de desviacion respecto a la media
+    static final double MAX_ACC = 1.5;    // m/s2 of deviation from the mean
 
     private final SensorManager sm;
     private long[] tg = new long[2048], ta = new long[2048];
     private float[] wg = new float[2048], aa = new float[2048];
     private int ng, na;
-    private double mx, my, mz; // media corriente del acelerometro
+    private double mx, my, mz; // running mean of the accelerometer
 
     MotionGate(Context c) {
         sm = c.getSystemService(SensorManager.class);
@@ -52,7 +52,7 @@ final class MotionGate implements SensorEventListener {
 
     @Override public void onAccuracyChanged(Sensor s, int a) {}
 
-    /** {maxima rotacion rad/s, maxima desviacion de aceleracion m/s2} entre t0 y t1 (ns, elapsedRealtime). */
+    /** {max rotation rad/s, max acceleration deviation m/s2} between t0 and t1 (ns, elapsedRealtime). */
     synchronized double[] stats(long t0, long t1) {
         double rot = 0, acc = 0;
         for (int i = 0; i < ng; i++) if (tg[i] >= t0 && tg[i] <= t1) rot = Math.max(rot, wg[i]);

@@ -1,0 +1,227 @@
+{
+  "appName": "CarAlign",
+  "decimalSeparator": ".",
+  "common": {
+    "cancel": "Cancel",
+    "save": "Save",
+    "close": "Close",
+    "stop": "Stop",
+    "start": "Start",
+    "sideLeft": "Left",
+    "sideRight": "Right",
+    "sideLeftShort": "L",
+    "sideRightShort": "R",
+    "millisecondsValue": "$value ms"
+  },
+  "audioSource": {
+    "androidAuto": "Android Auto",
+    "bluetooth": "Bluetooth",
+    "phoneSpeaker": "Phone speaker",
+    "usb": "USB",
+    "unrecognized": "Unrecognized source",
+    "unknown": "Unknown source"
+  },
+  "band": {
+    "broad": "broad",
+    "low": "low",
+    "mid": "mid",
+    "high": "high"
+  },
+  "phase": {
+    "preparing": "Preparing",
+    "adjustingLevel": "Adjusting level",
+    "measuring": "Measuring",
+    "verifying": "Verifying",
+    "stoppingCapture": "Stopping capture",
+    "done": "Done"
+  },
+  "notice": {
+    "captureBlocked": "The app that is playing doesn't allow its audio to be processed (capture blocked). Alignment was stopped and the original audio was restored.",
+    "demoNeedsGuard": "Without the guard the original audio can't be muted; reopen the app or check the setup steps in Diagnostics."
+  },
+  "home": {
+    "guideTooltip": "How to place the phone",
+    "advancedTooltip": "Advanced",
+    "readiness": {
+      "ready": "All set · guard connected",
+      "micMissingTitle": "Microphone permission is missing",
+      "micMissingSubtitle": "Measuring is not possible without it.",
+      "grantPermission": "Grant permission",
+      "connectingTitle": "Connecting the guard…",
+      "connectingSubtitle": "If the phone shows \"Allow debugging?\", accept it and tick \"Always allow\".",
+      "shizukuTitle": "Waiting for Shizuku authorization…",
+      "shizukuSubtitle": "Accept the Shizuku prompt so CarAlign can start its guard.",
+      "startingTitle": "Starting the guard…",
+      "offTitle": "The audio guard is off",
+      "offSubtitle": "Without it the original audio isn't muted and capture doesn't start on its own.",
+      "retry": "Retry"
+    },
+    "status": {
+      "active": "Alignment active",
+      "stopped": "Alignment stopped",
+      "processing": "Processing the phone's audio",
+      "lastSaved": "Last saved setting",
+      "value": "$side +$ms ms"
+    },
+    "align": {
+      "first": "Align automatically",
+      "again": "Align again",
+      "hint": "Measures with the phone's microphone, applies the delay and verifies it (~1 min)."
+    },
+    "countdown": {
+      "title": "Leave the phone in place",
+      "subtitle": "Microphone facing forward and still"
+    },
+    "measuring": {
+      "title": "$phase…",
+      "stayStill": "Don't move the phone"
+    },
+    "result": {
+      "delayLeft": "Delay the left channel $ms ms",
+      "delayRight": "Delay the right channel $ms ms",
+      "nothingApplied": "No change was applied",
+      "measuredVia": "Measured through $name",
+      "measuredPhoneSpeaker": "Measured with the phone speaker (not the car's)",
+      "measuredUsb": "Measured through USB",
+      "sourceUnrecognized": "Audio source not recognized",
+      "details": "Details",
+      "verified": "Verified: residual $residual µs · spread $sigma µs · $valid/$reps valid · $band band",
+      "bandsLine": "Without delay, R−L per band: low $low · mid $mid · high $high ms",
+      "output": "Output: $name",
+      "outputRaw": "Output: $name ($raw)",
+      "microphone": "Microphone: $name",
+      "noise": "Noise: $db dBFS"
+    },
+    "profiles": {
+      "title": "Profiles",
+      "saveCurrent": "Save current",
+      "empty": "No profiles yet. Every automatic alignment saves one.",
+      "hint": "Tap a profile to apply it; swipe to delete it.",
+      "autoName": "Auto $time",
+      "dialogTitle": "Save profile",
+      "dialogHint": "Name (e.g. Driver)"
+    }
+  },
+  "advanced": {
+    "title": "Advanced",
+    "manual": {
+      "title": "Manual adjustment",
+      "subtitle": "Changes apply live if the alignment is active.",
+      "difference": "≈ $cm cm difference",
+      "delayLeft": "Delay left",
+      "delayRight": "Delay right",
+      "startAlignment": "Start alignment"
+    },
+    "demo": {
+      "title": "Demo",
+      "description": "Goes from 0 ms to a profile with music playing: you can hear the stage centering.",
+      "needsProfile": "Save a profile first (align, or use \"Save current\").",
+      "stop": "Stop demo",
+      "profile": "Profile",
+      "profileItem": "$name · $ms ms $side",
+      "duration": "Duration",
+      "steps": "Steps",
+      "seconds": "$n s",
+      "toProfile": "0 → profile",
+      "roundTrip": "Back and forth",
+      "preparing": "Preparing",
+      "unaligned": "Not aligned",
+      "centering": "Centering",
+      "aligned": "Aligned",
+      "removing": "Removing",
+      "stepOf": "$label  (step $k of $n)"
+    },
+    "diagnostics": {
+      "title": "Diagnostics and compatibility",
+      "subtitle": "What this phone supports and how to set it up"
+    }
+  },
+  "diagnostics": {
+    "title": "Diagnostics",
+    "intro": "What this phone supports. If something doesn't work on another phone, copy the report and share it.",
+    "loading": "Loading…",
+    "noData": "No data",
+    "noResponse": "No response",
+    "testMute": "Test muting",
+    "copyReport": "Copy report",
+    "refresh": "Refresh",
+    "batterySaver": "Battery saver",
+    "reportCopied": "Report copied",
+    "muteWorks": "The muting channel works on this phone.\n$detail",
+    "muteFails": "The muting channel does NOT work yet.\n$detail",
+    "limitationTitle": "Important limitation",
+    "limitationBody": "Android doesn't let a regular app mute another one. CarAlign needs an ADB channel to do it: it has to be enabled from a computer (adb tcpip 5555) every time the phone restarts, or you can use Shizuku. Without that channel the app can't mute the original audio and won't start.",
+    "setupTitle": "Set up another phone",
+    "step1": "Enable developer options: Settings → About phone → tap \"Build number\" 7 times.",
+    "step2": "In developer options, enable \"USB debugging\".",
+    "step3": "Connect the phone to a computer with ADB and run  adb tcpip 5555 . It must be repeated every time the phone restarts.",
+    "step4": "Open CarAlign. If \"Allow debugging?\" appears, accept it and tick \"Always allow\".",
+    "step5": "Tap \"Test muting\". If it fails, read the reason: some brands need more settings (Xiaomi/Redmi/POCO: \"USB debugging (security settings)\"; Samsung: turn off Auto Blocker's USB command blocking).",
+    "step6": "Tap \"Battery saver\" and allow CarAlign to run unrestricted so it isn't closed in the background.",
+    "footer": "Without this channel the app can't mute the original audio and you would hear it doubled."
+  },
+  "guard": {
+    "adbInactiveNoShizuku": "Network ADB is not active. Shizuku isn't running either: open Shizuku and tap Start (wireless debugging), or connect the cable and run adb tcpip 5555 from a computer.",
+    "adbFailedNoShizuku": "Couldn't use the phone's ADB: $error. Shizuku isn't running either: open Shizuku and tap Start (wireless debugging), or connect the cable and run adb tcpip 5555 from a computer.",
+    "shizukuFailed": "Shizuku is active but failed: $error",
+    "notStarted": "The guard did not start."
+  },
+  "resultMessage": {
+    "speakerOutput": "The audio output is the phone speaker, not the car. Connect Android Auto or the car's Bluetooth and try again.",
+    "bluetoothCallLine": "Audio is going through the Bluetooth call line (mono, low quality). On the phone, go to Bluetooth > car > enable \"Media audio\" and try again.",
+    "noSignal": "The signal can't be heard well: raise the car volume, close the windows or reduce the noise and try again.",
+    "clipped": "The signal was clipping; the measurement level was lowered.",
+    "measurementUnreliable": "The measurement was not reliable: $reason.",
+    "verificationUnreliable": "The verification was not reliable: $reason.",
+    "differenceTooLarge": "The measured difference is very large; check the phone's position.",
+    "notVerifiable": "The adjustment could not be verified, so it is not applied.",
+    "identicalChannels": "Left and right sound identical (same arrival and level). If you didn't expect that, the output may be mono or mixed; check balance, fader and that the audio is stereo.",
+    "notConverging": "The adjustment doesn't fully converge; a residual of $us µs remains.",
+    "notConvergingRejected": "The adjustment doesn't converge (residual $us µs); it is not applied.",
+    "internalError": "Internal error: $detail",
+    "unknown": "Unknown message ($code)"
+  },
+  "reason": {
+    "fewValidReps": "too few valid repetitions ($count)",
+    "lowRepeatability": "low repeatability (spread $us µs)",
+    "recordingTooShort": "recording too short",
+    "recordingSilent": "recording is silent",
+    "unknown": "unknown cause"
+  },
+  "placement": {
+    "title": "How to place the phone",
+    "topCaption": "Top view: the phone takes the place of the head.",
+    "sideCaption": "Side view: at ear height, lying flat, with the microphone facing forward.",
+    "step1Title": "Where the head goes",
+    "step1Body": "At ear height and centered between both ears, not against the door. A centimeter of difference already changes the result, so always place it the same way.",
+    "step2Title": "Microphone facing forward",
+    "step2Body": "The bottom edge of the phone (where the microphone is) points at the windshield. Don't cover it with your hand or a thick case.",
+    "step3Title": "Still and firm",
+    "step3Body": "Resting or in a holder, never in your hand. If it moves, the measurement is discarded.",
+    "carTitle": "In the car",
+    "car1": "Windows closed and nobody talking",
+    "car2": "Engine off or steady",
+    "car3": "Car volume at mid level",
+    "car4": "Fader fully forward (rear speakers off)",
+    "car5": "Balance centered and tone controls flat",
+    "car6": "Connected through Android Auto or Bluetooth, with the music paused",
+    "rearWarning": "With the rear speakers on, the sound \"comes from behind\" and the measurement is skewed.",
+    "firstRunInfo": "You'll have 10 s to leave the phone; then test sounds play for a little over a minute. A rising tone at the end means success; a low one means you need to repeat.",
+    "info": "When measuring you'll have 10 s to leave the phone. A rising tone at the end means success; a low one means you need to repeat.",
+    "dontShowAgain": "Don't show again",
+    "dontShowAgainHint": "You can always find it with the help icon",
+    "gotIt": "Got it, start",
+    "figure": {
+      "windshieldFront": "Windshield (front)",
+      "leftMarker": "L",
+      "rightMarker": "R",
+      "centered": "Centered",
+      "micForward": "Microphone\nfacing forward",
+      "notAgainstDoor": "Not against\nthe door",
+      "windshield": "Windshield",
+      "earHeight": "Ear height",
+      "micBottomEdge": "Microphone (bottom edge)\nfacing forward",
+      "phoneLying": "Phone\nlying flat"
+    }
+  }
+}

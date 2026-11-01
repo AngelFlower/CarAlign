@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Carpetas donde la app y el vigilante (usuario shell) se pasan archivos. Se usan DOS por compatibilidad:
- * Android/media/<app> (funciona en Android 11+; el usuario shell no puede entrar en Android/data en Android 11)
- * y Android/data/<app>/files (la de siempre). Se escribe en las dos y se lee la mas reciente.
+ * Folders where the app and the guard (shell user) exchange files. TWO are used for compatibility:
+ * Android/media/<app> (works on Android 11+; the shell user cannot enter Android/data on Android 11)
+ * and Android/data/<app>/files (the traditional one). Writes go to both and reads take the newest.
  */
 final class SharedDirs {
     private SharedDirs() {}
@@ -25,7 +25,7 @@ final class SharedDirs {
         return l.toArray(new File[0]);
     }
 
-    /** Carpeta preferida para datos que el usuario baja por ADB (informes): Android/media si existe. */
+    /** Preferred folder for data the user pulls over ADB (reports): Android/media when it exists. */
     static File primary(Context c) {
         File[] a = all(c);
         return a.length > 0 ? a[0] : c.getFilesDir();
@@ -52,7 +52,7 @@ final class SharedDirs {
         return false;
     }
 
-    /** Edad en ms del archivo mas reciente entre las carpetas; Long.MAX_VALUE si no existe en ninguna. */
+    /** Age in ms of the newest file across the folders; Long.MAX_VALUE if it exists in none. */
     static long ageMs(Context c, String name) {
         long best = Long.MAX_VALUE;
         long now = System.currentTimeMillis();
@@ -63,7 +63,7 @@ final class SharedDirs {
         return best;
     }
 
-    /** Contenido (texto) del archivo mas reciente si tiene menos de maxAgeMs; null si no hay uno fresco. */
+    /** Text content of the newest file if it is younger than maxAgeMs; null if none is fresh. */
     static String readFresh(Context c, String name, long maxAgeMs) {
         File best = null;
         long now = System.currentTimeMillis();

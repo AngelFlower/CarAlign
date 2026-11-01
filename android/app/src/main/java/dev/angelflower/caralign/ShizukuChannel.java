@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 import rikka.shizuku.Shizuku;
 
-/** Canal de shell por Shizuku: alternativa al ADB por red, util tras un reinicio (Shizuku puede arrancar solo). */
+/** Shell channel through Shizuku: an alternative to network ADB, useful after a reboot (Shizuku can start by itself). */
 final class ShizukuChannel {
     private static final int REQ = 4242;
 
@@ -33,7 +33,7 @@ final class ShizukuChannel {
         }
     }
 
-    /** Pide el permiso (aviso de Shizuku en pantalla) y espera hasta 90 s a que se conceda. */
+    /** Asks for permission (Shizuku prompt on screen) and waits up to 90 s for it to be granted. */
     static boolean requestAndWait() throws InterruptedException {
         if (permitted()) return true;
         final CountDownLatch latch = new CountDownLatch(1);
@@ -54,10 +54,10 @@ final class ShizukuChannel {
         return result[0] == PackageManager.PERMISSION_GRANTED;
     }
 
-    /** Ejecuta `sh -c cmd` como el usuario de Shizuku (shell), con stdin opcional; devuelve la salida. */
+    /** Runs `sh -c cmd` as the Shizuku user (shell), with optional stdin; returns the output. */
     static String run(String cmd, byte[] stdin) throws Exception {
         Method m = Shizuku.class.getDeclaredMethod("newProcess", String[].class, String[].class, String.class);
-        m.setAccessible(true); // en la API 13 es privado
+        m.setAccessible(true); // private in API 13
         Process p = (Process) m.invoke(null, new String[]{"sh", "-c", cmd}, null, null);
         if (stdin != null) {
             try (OutputStream o = p.getOutputStream()) { o.write(stdin); }

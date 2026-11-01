@@ -1,15 +1,15 @@
 package dev.angelflower.caralign;
 
 /**
- * Barrido exponencial 200-12000 Hz con ventana Hann. Reparte la energia por octava (el lineal dejaba casi
- * sin senal la zona de graves y medios bajos, que es la que decide la localizacion de una voz).
+ * Exponential sweep 200-12000 Hz with a Hann window. It spreads energy per octave (a linear sweep left almost
+ * no signal in the bass and low-mid region, which is what decides the localization of a voice).
  */
 final class Chirp {
     static final double F0 = 200, F1 = 12000, SEC = 0.4;
 
     private Chirp() {}
 
-    /** Valor del barrido tau segundos despues de su inicio (0 fuera de [0, SEC]). */
+    /** Sweep value tau seconds after its start (0 outside [0, SEC]). */
     static double valueAt(double tau) {
         if (tau < 0 || tau > SEC) return 0;
         double k = Math.log(F1 / F0);

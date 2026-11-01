@@ -3,13 +3,13 @@ package dev.angelflower.caralign;
 import java.util.Arrays;
 
 /**
- * Analisis puro (sin Android) de una grabacion con la secuencia L,R,L,R... de chirps.
- * Mide la llegada de cada chirp por correlacion cruzada (envolvente analitica, interpolacion
- * parabolica) en banda ancha y en tres bandas, y devuelve la diferencia R-L por repeticion.
+ * Pure analysis (no Android) of a recording holding the L,R,L,R... chirp sequence.
+ * Measures each chirp's arrival by cross-correlation (analytic envelope, parabolic interpolation)
+ * in a broad band and in three bands, and returns the R-L difference per repetition.
  */
 final class Detector {
     static final double[][] BANDS = {{200, 12000}, {200, 1000}, {1000, 4000}, {4000, 12000}};
-    static final String[] BAND_NAMES = {"ancha", "graves", "medios", "agudos"};
+    static final String[] BAND_NAMES = {"broad", "low", "mid", "high"};
     static final int NB = BANDS.length;
 
     static final class Params {
@@ -20,10 +20,10 @@ final class Detector {
     static final class Result {
         String error;
         int anchor;
-        double driftPpm; // deriva reproduccion/captura estimada (ppm)
-        double[][] tL, tR, snrL, snrR, ambL, ambR; // [banda][rep], muestras / dB / razon
+        double driftPpm; // estimated playback/capture clock drift (ppm)
+        double[][] tL, tR, snrL, snrR, ambL, ambR; // [band][rep], samples / dB / ratio
         boolean[][] ok;
-        double[][] deltaMs;                          // [banda][rep] = aR - aL en ms, NaN si no valida
+        double[][] deltaMs;                          // [band][rep] = aR - aL in ms, NaN if not valid
         double[] medianMs = new double[NB], sigmaMs = new double[NB];
         int[] valid = new int[NB];
     }
@@ -34,7 +34,7 @@ final class Detector {
         Result r = new Result();
         int span = (p.reps - 1) * p.period + p.gap;
         if (len < span + ref.length + p.fs / 2) {
-            r.error = "grabación demasiado corta";
+            r.error = "recordingTooShort";
             return r;
         }
         int n = Fft.nextPow2(len + ref.length);
@@ -56,11 +56,11 @@ final class Detector {
             med[b] = median(env[b], len);
         }
         if (!(med[0] > 0)) {
-            r.error = "grabación en silencio";
+            r.error = "recordingSilent";
             return r;
         }
 
-        // 1) calendario: desplazamiento T que maximiza la suma de la envolvente en las 2*reps posiciones esperadas
+        // 1) schedule: offset T that maximizes the envelope sum over the 2*reps expected positions
         int w = (int) (0.008 * p.fs);
         float[] lm = slidingMax(env[0], len, w);
         int tMax = len - 1 - span;
@@ -73,7 +73,7 @@ final class Detector {
         }
         r.anchor = bestT;
 
-        // 2) pasada 1 (ancha, +-20 ms): re-centrar L y R por separado con la mediana de los desvios
+        // 2) pass 1 (broad, +-20 ms): re-center L and R separately using the median of the offsets
         int w1 = (int) (0.020 * p.fs);
         double[] offL = new double[p.reps], offR = new double[p.reps];
         for (int k = 0; k < p.reps; k++) {
@@ -81,10 +81,10 @@ final class Detector {
             offL[k] = argmax(env[0], len, eL, w1) - eL;
             offR[k] = argmax(env[0], len, eR, w1) - eR;
         }
-        // grupo de posiciones mas repetido (un salto de latencia de Android Auto no debe desplazar el centro)
+        // most repeated group of positions (an Android Auto latency jump must not move the center)
         double oL = clusterCenter(offL, (int) (0.0015 * p.fs)), oR = clusterCenter(offR, (int) (0.0015 * p.fs));
 
-        // 3) pasada 2 por banda (+-6 ms alrededor del centro re-centrado)
+        // 3) pass 2 per band (+-6 ms around the re-centered position)
         int w2 = (int) (0.003 * p.fs), wAmb = (int) (0.012 * p.fs), excl = (int) (0.0015 * p.fs);
         r.tL = new double[NB][p.reps]; r.tR = new double[NB][p.reps];
         r.snrL = new double[NB][p.reps]; r.snrR = new double[NB][p.reps];
@@ -103,8 +103,8 @@ final class Detector {
                         && a[2] < p.maxAmbiguity && c[2] < p.maxAmbiguity;
             }
         }
-        // deriva entre el reloj de reproduccion y el de captura: estira el hueco L->R (gap) y sesga la
-        // diferencia; se estima con la pendiente de las posiciones de la banda ancha frente al calendario
+        // drift between the playback and capture clocks: it stretches the L->R gap and biases the
+        // difference; estimated from the slope of the broad-band positions against the schedule
         double f = driftFactor(r, p);
         r.driftPpm = (f - 1) * 1e6;
         for (int b = 0; b < NB; b++) {
@@ -117,7 +117,7 @@ final class Detector {
         return r;
     }
 
-    /** Mediana, sigma robusta (MAD) y numero de repeticiones validas por banda; mask opcional (movimiento). */
+    /** Median, robust sigma (MAD) and number of valid repetitions per band; optional mask (motion). */
     static void aggregate(Result r, boolean[] mask) {
         for (int b = 0; b < NB; b++) {
             int reps = r.deltaMs[b].length;
@@ -137,7 +137,7 @@ final class Detector {
         }
     }
 
-    /** 1 + deriva: pendiente media (L y R) de la posicion de cada chirp respecto al periodo nominal. */
+    /** 1 + drift: mean slope (L and R) of each chirp's position relative to the nominal period. */
     private static double driftFactor(Result r, Params p) {
         double sum = 0;
         int n = 0;
@@ -157,17 +157,17 @@ final class Detector {
         }
         if (n == 0) return 1;
         double f = sum / n;
-        return Math.abs(f - 1) > 500e-6 ? 1 : f; // fuera de lo plausible: no corregir
+        return Math.abs(f - 1) > 500e-6 ? 1 : f; // outside the plausible range: do not correct
     }
 
-    // ---- utilidades ----
+    // ---- utilities ----
 
     private static float[] envelope(double[] sr, double[] si, double[] yr, double[] yi, int n, int fs,
                                     double lo, double hi, int len) {
         double df = (double) fs / n;
         for (int i = 0; i < n; i++) {
             if (i <= n / 2) {
-                double m = mask(i * df, lo, hi) * ((i == 0 || i == n / 2) ? 1 : 2); // senal analitica
+                double m = mask(i * df, lo, hi) * ((i == 0 || i == n / 2) ? 1 : 2); // analytic signal
                 yr[i] = sr[i] * m;
                 yi[i] = si[i] * m;
             } else {
@@ -197,7 +197,7 @@ final class Detector {
         return s[s.length / 2];
     }
 
-    /** Centro (media) del grupo de valores con mas vecinos a +-tol; desempata por el primero. */
+    /** Center (mean) of the group of values with the most neighbors within +-tol; ties go to the first. */
     private static double clusterCenter(double[] v, int tol) {
         int best = -1, bestN = -1;
         for (int i = 0; i < v.length; i++) {
@@ -244,10 +244,10 @@ final class Detector {
     }
 
     /**
-     * {posicion sub-muestra, SNR del pico en dB respecto a la mediana, razon pico-previo / pico}.
-     * Toma el PRIMER arribo: el maximo del entorno, o un pico anterior (hasta 3 ms antes) que alcance al menos
-     * `first` veces el maximo. En un habitaculo las reflexiones posteriores pueden ser casi tan fuertes como el
-     * sonido directo y no deben invalidar la medicion; solo importa que no haya un pico anterior comparable.
+     * {sub-sample position, peak SNR in dB relative to the median, previous-peak / peak ratio}.
+     * Takes the FIRST arrival: the maximum of the neighborhood, or an earlier peak (up to 3 ms before) that reaches at
+     * least `first` times the maximum. In a cabin later reflections can be almost as strong as the direct
+     * sound and must not invalidate the measurement; what matters is that no comparable earlier peak exists.
      */
     private static double[] peak(float[] e, int len, int center, int w, int wAmb, int excl, float median, double first) {
         int i = argmax(e, len, center, w);
@@ -255,14 +255,14 @@ final class Detector {
         int back = (int) (0.003 * 48000);
         for (int j = Math.max(2, i - back); j < i; j++) {
             boolean localMax = e[j] >= e[j - 1] && e[j] >= e[j + 1] && e[j] >= e[j - 2] && e[j] >= e[j + 2];
-            if (localMax && e[j] >= first * top) { i = j; break; } // el mas temprano que cumple
+            if (localMax && e[j] >= first * top) { i = j; break; } // the earliest one that qualifies
         }
         double a = e[i - 1], b = e[i], c = e[i + 1];
         double d = a - 2 * b + c;
         double pos = d == 0 ? i : i + 0.5 * (a - c) / d;
         double snr = 20 * Math.log10(Math.max(top, 1e-12) / Math.max(median, 1e-12));
-        // mayor MAXIMO LOCAL previo (queda < first por construccion). Solo cuentan maximos locales: en una banda
-        // estrecha el pico es ancho y su propia falda no es un arribo anterior.
+        // largest earlier LOCAL maximum (below `first` by construction). Only local maxima count: in a narrow
+        // band the peak is wide and its own skirt is not an earlier arrival.
         double earlier = 0;
         for (int j = Math.max(2, i - back); j < i; j++) {
             boolean localMax = e[j] >= e[j - 1] && e[j] >= e[j + 1] && e[j] >= e[j - 2] && e[j] >= e[j + 2];

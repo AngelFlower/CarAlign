@@ -9,12 +9,13 @@ import java.io.InputStream;
 
 import dadb.Dadb;
 
-/** Arranca el vigilante de Tidal al abrir la app y mantiene su "contrato" de vida (app_alive). */
+/** Starts the playback guard when the app opens and keeps its liveness contract (app_alive). */
 final class GuardManager {
     private static final String TAG = "CarAlign";
-    static final String REMOTE = "/data/local/tmp/tidal_guard.sh";
+    static final String REMOTE = "/data/local/tmp/caralign_guard.sh";
 
-    static volatile String state = "idle", detail = ""; // idle, auth, starting, alive, error
+    /** state: idle, auth, shizuku, starting, alive, error. detail: `code` or `code:argument` (localized by Flutter). */
+    static volatile String state = "idle", detail = "";
     private static boolean busy;
     private static Thread lease;
 
@@ -24,7 +25,7 @@ final class GuardManager {
         return SharedDirs.ageMs(c, "guard_alive") < 5000;
     }
 
-    /** Renueva app_alive cada segundo mientras la actividad esta visible. */
+    /** Renews app_alive every second while the activity is visible. */
     static synchronized void startLease(Context c) {
         if (lease != null) return;
         final Context app = c.getApplicationContext();
@@ -65,7 +66,7 @@ final class GuardManager {
     }
 
     private static byte[] script(Context app) throws Exception {
-        try (InputStream in = app.getAssets().open("tidal_guard.sh")) {
+        try (InputStream in = app.getAssets().open("caralign_guard.sh")) {
             java.io.ByteArrayOutputStream b = new java.io.ByteArrayOutputStream();
             byte[] buf = new byte[4096];
             int n;
@@ -85,27 +86,26 @@ final class GuardManager {
             finish(app);
             return;
         } catch (Throwable t) {
-            Log.w(TAG, "guardia por ADB: " + t);
+            Log.w(TAG, "guard via ADB: " + t);
             String m = String.valueOf(t.getMessage());
             adbErr = m.contains("Connection refused") || m.contains("ECONNREFUSED") || m.contains("Failed to connect")
-                    ? "ADB por red no está activo." : "No se pudo usar el ADB del teléfono: " + m + ".";
+                    ? "adbInactiveNoShizuku" : "adbFailedNoShizuku:" + m;
         }
-        // plan B: Shizuku (puede arrancar solo al encender el telefono, sin PC)
+        // plan B: Shizuku (can start on its own when the phone boots, no computer needed)
         if (ShizukuChannel.available()) {
             try {
                 startViaShizuku(app);
                 finish(app);
                 return;
             } catch (Throwable t) {
-                Log.w(TAG, "guardia por Shizuku: " + t);
+                Log.w(TAG, "guard via Shizuku: " + t);
                 state = "error";
-                detail = "Shizuku está activo pero falló: " + t.getMessage();
+                detail = "shizukuFailed:" + t.getMessage();
                 return;
             }
         }
         state = "error";
-        detail = adbErr + " Tampoco hay Shizuku en ejecución: abre Shizuku y pulsa Iniciar (depuración inalámbrica), "
-                + "o conecta el cable y ejecuta scripts/preparar_telefono.sh.";
+        detail = adbErr;
     }
 
     private static void finish(Context app) {
@@ -114,7 +114,7 @@ final class GuardManager {
             detail = "";
         } else {
             state = "error";
-            detail = "El vigilante no arrancó.";
+            detail = "notStarted";
         }
     }
 
@@ -122,12 +122,12 @@ final class GuardManager {
         Dadb d = null;
         try {
             d = Priv.connect(app);
-            d.shell("id -u"); // fuerza la autenticacion (si hace falta, el telefono muestra el aviso)
+            d.shell("id -u"); // forces authentication (the phone shows its prompt if needed)
             state = "starting";
             File tmp = new File(app.getCacheDir(), "tidal_guard.sh");
             try (FileOutputStream out = new FileOutputStream(tmp)) { out.write(script(app)); }
             d.push(tmp, REMOTE, 493, System.currentTimeMillis());
-            d.shell("pkill -f '[t]idal_guard.sh'"); // instancias viejas (el patron no coincide consigo mismo)
+            d.shell("pkill -f '[c]aralign_guard.sh'"); // old instances (the pattern doesn't match itself)
             Thread.sleep(500);
             d.shell("setsid nohup sh " + REMOTE + " </dev/null >/dev/null 2>&1 &");
             waitAlive(app);
@@ -140,12 +140,12 @@ final class GuardManager {
 
     private static void startViaShizuku(Context app) throws Exception {
         if (!ShizukuChannel.permitted()) {
-            state = "shizuku"; // la interfaz pide autorizar a CarAlign en el aviso de Shizuku
-            if (!ShizukuChannel.requestAndWait()) throw new IllegalStateException("no se autorizó a CarAlign en Shizuku");
+            state = "shizuku"; // the UI asks the user to authorize CarAlign in the Shizuku prompt
+            if (!ShizukuChannel.requestAndWait()) throw new IllegalStateException("CarAlign was not authorized in Shizuku");
         }
         state = "starting";
         ShizukuChannel.run("cat > " + REMOTE + " && chmod 755 " + REMOTE, script(app));
-        ShizukuChannel.run("pkill -f '[t]idal_guard.sh'", null);
+        ShizukuChannel.run("pkill -f '[c]aralign_guard.sh'", null);
         Thread.sleep(500);
         ShizukuChannel.run("setsid nohup sh " + REMOTE + " </dev/null >/dev/null 2>&1 &", null);
         waitAlive(app);

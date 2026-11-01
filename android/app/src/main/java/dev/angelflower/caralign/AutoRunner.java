@@ -17,7 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-/** Ejecuta el flujo automatico en un hilo y deja estado y resultado para que la interfaz los consulte. */
+/** Runs the automatic flow on a thread and leaves its state and result for the UI to poll. */
 final class AutoRunner {
     private static final String TAG = "CarAlign";
 
@@ -32,15 +32,28 @@ final class AutoRunner {
         running = true;
         done = false;
         resultJson = "";
-        phase = "Preparando";
+        phase = AlignLogic.PREPARING;
         frac = 0;
         new Thread(() -> run(app), "autoalign").start();
         return true;
     }
 
-    /** JSON no admite NaN: las repeticiones no validas se guardan como null. */
+    /** JSON has no NaN: invalid repetitions are stored as null. */
     private static Object num(double v) {
         return Double.isNaN(v) || Double.isInfinite(v) ? JSONObject.NULL : (Object) v;
+    }
+
+    private static JSONArray messagesJson(java.util.List<AlignLogic.Msg> messages) throws Exception {
+        JSONArray arr = new JSONArray();
+        for (AlignLogic.Msg m : messages) {
+            JSONObject j = new JSONObject();
+            j.put("code", m.code);
+            if (m.reason != null) j.put("reason", m.reason);
+            if (m.value != 0) j.put("value", num(m.value));
+            if (m.text != null) j.put("text", m.text);
+            arr.put(j);
+        }
+        return arr;
     }
 
     private static void run(Context app) {
@@ -51,12 +64,12 @@ final class AutoRunner {
                 .setOnAudioFocusChangeListener(c -> { }).build();
         JSONObject res = new JSONObject();
         String stamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
-        File base = SharedDirs.primary(app); // Android/media: el PC puede bajar los informes tambien en Android 11+
-        File dir = new File(base, "reportes");
+        File base = SharedDirs.primary(app); // Android/media: a computer can pull the reports on Android 11+ too
+        File dir = new File(base, "reports");
         dir.mkdirs();
         try {
-            if (CaptureService.active) { // la captura y la medicion no conviven
-                phase = "Deteniendo la captura";
+            if (CaptureService.active) { // capture and measurement cannot coexist
+                phase = AlignLogic.STOPPING_CAPTURE;
                 app.stopService(new Intent(app, CaptureService.class));
                 Thread.sleep(1800);
             }
@@ -68,8 +81,8 @@ final class AutoRunner {
             Thread.sleep(600);
 
             Measurer m = new Measurer(app, dir, stamp);
-            // para pruebas de escritorio: crear files/permitir_altavoz permite medir con el altavoz del telefono
-            boolean allowSpeaker = SharedDirs.exists(app, "permitir_altavoz");
+            // for desktop tests: creating files/allow_speaker permits measuring through the phone speaker
+            boolean allowSpeaker = SharedDirs.exists(app, "allow_speaker");
             AlignLogic.Out o = AlignLogic.run(m, (ph, f) -> { phase = ph; frac = f; }, allowSpeaker);
             res.put("status", o.status);
             res.put("apply", o.apply);
@@ -81,7 +94,8 @@ final class AutoRunner {
             res.put("valid", o.valid);
             res.put("band", o.band);
             res.put("ampDb", o.ampDb);
-            res.put("messages", new JSONArray(o.messages));
+            res.put("reps", AlignLogic.REPS);
+            res.put("messages", messagesJson(o.messages));
             JSONArray runs = new JSONArray();
             for (AlignLogic.Meas r : o.runs) {
                 JSONObject j = new JSONObject();
@@ -120,29 +134,30 @@ final class AutoRunner {
                 for (int b = 0; b < Detector.NB; b++) bm.put(Detector.BAND_NAMES[b], num(o.runs.get(0).det.medianMs[b]));
                 res.put("bandsMs", bm);
             }
-            if (o.runs.isEmpty() && !o.outDev.isEmpty()) res.put("out", o.outDev); // rechazo antes de medir
+            if (o.runs.isEmpty() && !o.outDev.isEmpty()) res.put("out", o.outDev); // rejected before measuring
             if (!o.runs.isEmpty()) {
                 res.put("out", o.runs.get(0).outDev);
                 res.put("in", o.runs.get(0).inDev);
                 res.put("noiseDbfs", o.runs.get(0).noiseDbfs);
             }
         } catch (Throwable t) {
-            Log.e(TAG, "autoalign fallo", t);
+            Log.e(TAG, "autoalign failed", t);
             try {
                 res.put("status", "FAIL");
                 res.put("apply", false);
-                res.put("messages", new JSONArray().put("Error interno: " + t));
+                res.put("messages", messagesJson(java.util.Collections.singletonList(
+                        AlignLogic.Msg.text("internalError", String.valueOf(t)))));
             } catch (Exception ignored) { }
         } finally {
             am.abandonAudioFocusRequest(fr);
             try {
                 try (FileWriter w = new FileWriter(new File(dir, stamp + ".json"))) { w.write(res.toString(2)); }
             } catch (Exception e) {
-                Log.w(TAG, "no se pudo guardar el reporte: " + e);
+                Log.w(TAG, "could not save the report: " + e);
             }
-            Log.i(TAG, "autoalign resultado " + res);
+            Log.i(TAG, "autoalign result " + res);
             resultJson = res.toString();
-            phase = "Listo";
+            phase = AlignLogic.DONE;
             frac = 1;
             running = false;
             done = true;

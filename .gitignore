@@ -57,9 +57,9 @@ android/local.properties
 /GUIA_COCHE.md
 /docs/
 /prototipo/
-/herramientas/probe/
+/tools/probe/
 /scripts/
 /test/reportes/
-herramientas/pruebas_jvm/out/
+tools/jvm_tests/out/
 /android/build/
 /store/

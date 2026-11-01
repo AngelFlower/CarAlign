@@ -75,7 +75,7 @@ keyAlias=upload
 keyPassword=...
 ```
 
-Pruebas de simulación (Java, sin teléfono): `herramientas/pruebas_jvm/run.sh`.
+Pruebas de simulación (Java, sin teléfono): `tools/jvm_tests/run.sh`.
 
 ## Privacidad
 

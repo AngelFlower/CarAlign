@@ -1,6 +1,6 @@
 package dev.angelflower.caralign;
 
-/** FFT radix-2 in situ sobre arreglos re/im. Sin dependencias de Android. */
+/** In-place radix-2 FFT over re/im arrays. No Android dependencies. */
 final class Fft {
     private Fft() {}
 

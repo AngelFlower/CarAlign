@@ -1,13 +1,13 @@
 package dev.angelflower.caralign;
 
 /**
- * Retraso de un canal de un flujo estereo entrelazado, ajustable en vivo y sin chasquidos: el retraso se
- * desliza hacia el objetivo (interpolacion lineal entre muestras) y, en reposo, es un numero entero de
- * muestras. Cambiar de canal se hace pasando antes por retraso 0.
+ * Delay of one channel of an interleaved stereo stream, adjustable live without clicks: the delay slides
+ * toward its target (linear interpolation between samples) and, at rest, is a whole number of samples.
+ * Switching channel goes through a delay of 0 first.
  */
 public class DelayLine {
-    public static final int MAX_SAMPLES = 480; // 10 ms a 48 kHz
-    static final float DEFAULT_RATE = 0.05f;   // muestras de retraso por muestra de audio (1 ms en 20 ms)
+    public static final int MAX_SAMPLES = 480; // 10 ms at 48 kHz
+    static final float DEFAULT_RATE = 0.05f;   // delay samples per audio sample (1 ms over 20 ms)
 
     private static final int SIZE = 1024, MASK = SIZE - 1;
 
@@ -33,18 +33,18 @@ public class DelayLine {
         return Math.max(0, Math.min(MAX_SAMPLES, s));
     }
 
-    /** Ajuste normal: se desliza hacia el valor con la velocidad por defecto. */
+    /** Normal adjustment: slides to the value at the default rate. */
     public void set(boolean delayLeft, int samples) {
         pending = new Cmd(delayLeft ? 0 : 1, clamp(samples), DEFAULT_RATE);
     }
 
-    /** Rampa lineal hasta `samples` en `seconds` segundos (demostracion). */
+    /** Linear ramp to `samples` over `seconds` seconds (demo). */
     public void ramp(boolean delayLeft, int samples, double seconds) {
         float r = (float) Math.max(1e-6, Math.abs(clamp(samples) - cur) / Math.max(seconds, 0.01) / 48000.0);
         pending = new Cmd(delayLeft ? 0 : 1, clamp(samples), Math.min(r, 1f));
     }
 
-    public void setDelay(int samples) { // compatibilidad con la version anterior
+    public void setDelay(int samples) { // kept for backward compatibility
         set(ch == 0, samples);
     }
 
@@ -52,15 +52,15 @@ public class DelayLine {
         set(left, (int) tgt);
     }
 
-    /** Retraso actual en muestras (solo informativo; lo escribe el hilo de audio). */
+    /** Current delay in samples (informational only; written by the audio thread). */
     public float current() { return cur; }
 
-    /** Retrasa el canal elegido de buf (L,R,L,R...) in situ. */
+    /** Delays the chosen channel of buf (L,R,L,R...) in place. */
     public void process(short[] buf, int len) {
         Cmd c = pending;
         if (c != applied) {
             applied = c;
-            if (c.channel != ch && (cur > 0 || tgt > 0)) { // pasar por 0 antes de cambiar de canal
+            if (c.channel != ch && (cur > 0 || tgt > 0)) { // go through 0 before switching channel
                 afterSwitch = c;
                 tgt = 0;
                 rate = DEFAULT_RATE * 4;
@@ -84,8 +84,8 @@ public class DelayLine {
                     ring[write] = buf[i + ch];
                 }
             }
-            // Aritmetica ENTERA para el indice: un float solo guarda enteros exactos hasta 2^24 (5.8 min a 48 kHz) y
-            // despues el retraso oscilaba muestra a muestra (rechinido agudo). Solo la parte fraccionaria es float.
+            // INTEGER arithmetic for the index: a float only holds exact integers up to 2^24 (5.8 min at 48 kHz) and
+            // beyond that the delay jittered sample to sample (a high-pitched screech). Only the fraction is a float.
             int k = (int) cur;
             float fr = cur - k;
             int idx = (write - k) & MASK;

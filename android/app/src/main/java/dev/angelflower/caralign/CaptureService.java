@@ -21,15 +21,15 @@ import java.io.File;
 
 public class CaptureService extends Service {
     private static final String TAG = "CarAlign";
-    /** Lo lee la interfaz para saber si se esta capturando. */
+    /** Read by the UI to know whether a capture is running. */
     static volatile boolean active;
-    /** Aviso para la interfaz (p. ej. captura bloqueada por la app que suena); la interfaz lo lee y lo borra. */
+    /** Notice code for the UI (e.g. "captureBlocked"); the UI reads and clears it. */
     static volatile String notice = "";
 
     private volatile boolean running;
     private volatile DelayLine delayLine;
 
-    /** Afinacion para experimentos de latencia: files/tuning.txt con lineas clave=valor (block, track_frames, rec_frames, ll). */
+    /** Tuning for latency experiments: files/tuning.txt with key=value lines (block, track_frames, rec_frames, ll). */
     private int tun(String key, int def) {
         try {
             File d = getExternalFilesDir(null);
@@ -43,7 +43,7 @@ public class CaptureService extends Service {
         return def;
     }
 
-    /** getParcelableExtra(String, Class) es de Android 13; en Android 10-12 hay que usar la version antigua. */
+    /** getParcelableExtra(String, Class) is Android 13+; Android 10-12 need the old overload. */
     @SuppressWarnings("deprecation")
     private static Intent projectionData(Intent i) {
         return android.os.Build.VERSION.SDK_INT >= 33 ? i.getParcelableExtra("data", Intent.class)
@@ -54,7 +54,7 @@ public class CaptureService extends Service {
         SharedDirs.touch(this, "active");
     }
 
-    /** La marca "active" solo existe mientras se captura; el vigilante de shell la lee. */
+    /** The "active" marker exists only while capturing; the shell guard reads it. */
     private void setActive(boolean on) {
         if (on) SharedDirs.touch(this, "active");
         else SharedDirs.delete(this, "active");
@@ -63,13 +63,13 @@ public class CaptureService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (running) {
-            // ya capturando: un intent sin proyeccion solo ajusta el retraso; uno con ella se ignora
+            // already capturing: an intent without a projection only adjusts the delay; one with it is ignored
             if (!intent.hasExtra("data") && delayLine != null) {
                 int samples = Math.round(intent.getFloatExtra("delay_ms", 0f) * 48f);
                 boolean left = intent.getBooleanExtra("left", true);
                 float rampS = intent.getFloatExtra("ramp_s", 0f);
-                Log.i(TAG, "retraso -> " + samples + " muestras (" + (left ? "izq" : "der") + ")"
-                        + (rampS > 0 ? " en " + rampS + " s" : ""));
+                Log.i(TAG, "delay -> " + samples + " samples (" + (left ? "left" : "right") + ")"
+                        + (rampS > 0 ? " over " + rampS + " s" : ""));
                 if (rampS > 0) delayLine.ramp(left, samples, rampS);
                 else delayLine.set(left, samples);
             }
@@ -98,7 +98,7 @@ public class CaptureService extends Service {
                 .setSampleRate(48000).setChannelMask(AudioFormat.CHANNEL_IN_STEREO).build();
         final int BLOCK = tun("block", 480);
         final int recFrames = tun("rec_frames", 48000), trackFrames = tun("track_frames", BLOCK * 3), ll = tun("ll", 1);
-        Log.i(TAG, "afinacion: bloque=" + BLOCK + " rec=" + recFrames + " pista=" + trackFrames + " ll=" + ll);
+        Log.i(TAG, "tuning: block=" + BLOCK + " rec=" + recFrames + " track=" + trackFrames + " ll=" + ll);
         AudioRecord rec = new AudioRecord.Builder().setAudioPlaybackCaptureConfig(cfg)
                 .setAudioFormat(fmt).setBufferSizeInBytes(recFrames * 4).build();
         AudioTrack track = new AudioTrack.Builder()
@@ -113,7 +113,7 @@ public class CaptureService extends Service {
                 intent.getBooleanExtra("left", true));
         delayLine = dl;
         Log.i(TAG, "delay samples=" + Math.round(intent.getFloatExtra("delay_ms", 1f) * 48f));
-        // Latencia: bloques de 5 ms y cola de salida acotada (3 bloques = 15 ms); un buffer de 1 s dejaba acumular ~80 ms.
+        // Latency: 5 ms blocks and a bounded output queue (3 blocks = 15 ms); a 1 s buffer let ~80 ms pile up.
         track.setBufferSizeInFrames(trackFrames);
         running = true;
         rec.startRecording();
@@ -123,9 +123,9 @@ public class CaptureService extends Service {
         new Thread(() -> {
             android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
             int silentWhileOthers = 0;
-            boolean tripped = false; // freno de seguridad activado (indicador propio: la interfaz borra `notice` al leerlo)
+            boolean tripped = false; // safety breaker fired (own flag: the UI clears `notice` when it reads it)
             short[] buf = new short[BLOCK * 2];
-            // descartar lo acumulado antes de empezar: si no, esa cola se queda como retraso constante
+            // drop whatever piled up before starting: otherwise that backlog stays as a constant delay
             while (rec.read(buf, 0, buf.length, AudioRecord.READ_NON_BLOCKING) > 0) { }
             int lastUnderruns = 0;
             long lastUnderrunDownMs = System.currentTimeMillis();
@@ -149,26 +149,26 @@ public class CaptureService extends Service {
                             && track.getTimestamp(tsOut)) {
                         double capMs = (tRead - (tsIn.nanoTime + (framesRead - 1 - tsIn.framePosition) * 1e9 / 48000)) / 1e6;
                         double outMs = (tsOut.nanoTime + (framesWritten - 1 - tsOut.framePosition) * 1e9 / 48000 - tWrite) / 1e6;
-                        lat = String.format(java.util.Locale.US, " latencia: captura %.0f ms + salida %.0f ms = %.0f ms (bloque %d fr, buf pista %d fr)",
+                        lat = String.format(java.util.Locale.US, " latency: capture %.0f ms + output %.0f ms = %.0f ms (block %d fr, track buf %d fr)",
                                 capMs, outMs, capMs + outMs, r / 2, track.getBufferSizeInFrames());
                     }
                     int ur = track.getUnderrunCount();
-                    if (ur > lastUnderruns) { // cortes: ampliar la cola un bloque (hasta 100 ms) en vez de dejar que se oigan
+                    if (ur > lastUnderruns) { // dropouts: grow the queue by one block (up to 100 ms) instead of letting them be heard
                         int bigger = Math.min(4800, track.getBufferSizeInFrames() + BLOCK);
                         track.setBufferSizeInFrames(bigger);
-                        Log.i(TAG, "cortes en la salida: cola ampliada a " + bigger + " fr");
+                        Log.i(TAG, "output underruns: queue grown to " + bigger + " fr");
                         lastUnderruns = ur;
                     }
                     if (ur == lastUnderruns && track.getBufferSizeInFrames() > trackFrames
-                            && now - lastUnderrunDownMs > 30000) { // 30 s sin cortes: volver a acortar la cola
+                            && now - lastUnderrunDownMs > 30000) { // 30 s without dropouts: shrink the queue again
                         track.setBufferSizeInFrames(Math.max(trackFrames, track.getBufferSizeInFrames() - BLOCK));
                         lastUnderrunDownMs = now;
                     }
                     if (ur > lastUnderruns) lastUnderrunDownMs = now;
-                    // Freno de seguridad: si suena otra app de medios pero lo capturado es silencio, esa app bloquea la
-                    // captura (p. ej. contenido protegido). Como el vigilante la tiene silenciada, no se oiria nada:
-                    // se detiene la captura para que el vigilante devuelva el audio original.
-                    // la API publica solo muestra el propio reproductor; el vigilante (shell) ve todos y deja el conteo en "players"
+                    // Safety breaker: if another media app is playing but what we capture is silence, that app blocks
+                    // capture (e.g. protected content). The guard has it muted, so nothing would be heard: stop
+                    // capturing so the guard gives the original audio back.
+                    // The public API only shows our own player; the shell guard sees them all and writes the count to "players"
                     int others = 0;
                     try {
                         String pf = SharedDirs.readFresh(CaptureService.this, "players", 5000);
@@ -176,14 +176,13 @@ public class CaptureService extends Service {
                     } catch (Exception ignored) { }
                     silentWhileOthers = (peak == 0 && others >= 1) ? silentWhileOthers + 1 : 0;
                     if (silentWhileOthers >= 6) {
-                        notice = "La app que está sonando no permite procesar su audio (captura bloqueada). "
-                                + "Se detuvo la alineación y se restauró el audio original.";
-                        Log.w(TAG, "freno de seguridad: hay audio activo pero la captura llega en silencio");
+                        notice = "captureBlocked";
+                        Log.w(TAG, "safety breaker: audio is playing but the capture is silent");
                         tripped = true;
                         running = false;
                     }
-                    Log.i(TAG, "peak=" + peak + " underruns=" + ur + " activos=" + others + " silencio=" + silentWhileOthers + lat);
-                    touchMarker(); // latido: el vigilante solo silencia mientras la marca se renueve
+                    Log.i(TAG, "peak=" + peak + " underruns=" + ur + " others=" + others + " silent=" + silentWhileOthers + lat);
+                    touchMarker(); // heartbeat: the guard only mutes while the marker keeps being renewed
                     peak = 0;
                     last = now;
                 }
@@ -192,7 +191,7 @@ public class CaptureService extends Service {
             rec.release();
             track.stop();
             track.release();
-            if (tripped) stopSelf(); // frenado por seguridad: liberar el servicio y la marca (onDestroy borra la marca)
+            if (tripped) stopSelf(); // stopped by the breaker: release the service and the marker (onDestroy deletes it)
         }).start();
         return START_NOT_STICKY;
     }

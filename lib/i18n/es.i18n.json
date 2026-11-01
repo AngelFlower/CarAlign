@@ -1,0 +1,227 @@
+{
+  "appName": "CarAlign",
+  "decimalSeparator": ",",
+  "common": {
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "close": "Cerrar",
+    "stop": "Detener",
+    "start": "Iniciar",
+    "sideLeft": "Izquierdo",
+    "sideRight": "Derecho",
+    "sideLeftShort": "I",
+    "sideRightShort": "D",
+    "millisecondsValue": "$value ms"
+  },
+  "audioSource": {
+    "androidAuto": "Android Auto",
+    "bluetooth": "Bluetooth",
+    "phoneSpeaker": "Altavoz del teléfono",
+    "usb": "USB",
+    "unrecognized": "Origen no reconocido",
+    "unknown": "Origen desconocido"
+  },
+  "band": {
+    "broad": "ancha",
+    "low": "graves",
+    "mid": "medios",
+    "high": "agudos"
+  },
+  "phase": {
+    "preparing": "Preparando",
+    "adjustingLevel": "Ajustando nivel",
+    "measuring": "Midiendo",
+    "verifying": "Verificando",
+    "stoppingCapture": "Deteniendo la captura",
+    "done": "Listo"
+  },
+  "notice": {
+    "captureBlocked": "La app que está sonando no permite procesar su audio (captura bloqueada). Se detuvo la alineación y se restauró el audio original.",
+    "demoNeedsGuard": "Sin el vigilante no se puede silenciar el original; abre la app de nuevo o revisa los pasos de preparación en Diagnóstico."
+  },
+  "home": {
+    "guideTooltip": "Cómo colocar el teléfono",
+    "advancedTooltip": "Avanzado",
+    "readiness": {
+      "ready": "Todo listo · vigilante conectado",
+      "micMissingTitle": "Falta el permiso del micrófono",
+      "micMissingSubtitle": "Sin él no se puede medir.",
+      "grantPermission": "Dar permiso",
+      "connectingTitle": "Conectando el vigilante…",
+      "connectingSubtitle": "Si el teléfono muestra \"¿Permitir depuración?\", acéptalo y marca \"Siempre permitir\".",
+      "shizukuTitle": "Esperando la autorización de Shizuku…",
+      "shizukuSubtitle": "Acepta el aviso de Shizuku para que CarAlign pueda arrancar su vigilante.",
+      "startingTitle": "Iniciando el vigilante…",
+      "offTitle": "El vigilante de audio está apagado",
+      "offSubtitle": "Sin él no se silencia el original ni se inicia la captura sola.",
+      "retry": "Reintentar"
+    },
+    "status": {
+      "active": "Alineación activa",
+      "stopped": "Alineación detenida",
+      "processing": "Procesando el audio del teléfono",
+      "lastSaved": "Último ajuste guardado",
+      "value": "$side +$ms ms"
+    },
+    "align": {
+      "first": "Alinear automáticamente",
+      "again": "Volver a alinear",
+      "hint": "Mide con el micrófono del teléfono, aplica el retraso y lo verifica (~1 min)."
+    },
+    "countdown": {
+      "title": "Deja el teléfono en su sitio",
+      "subtitle": "Micrófono hacia el frente y quieto"
+    },
+    "measuring": {
+      "title": "$phase…",
+      "stayStill": "No muevas el teléfono"
+    },
+    "result": {
+      "delayLeft": "Retrasar el izquierdo $ms ms",
+      "delayRight": "Retrasar el derecho $ms ms",
+      "nothingApplied": "No se aplicó ningún cambio",
+      "measuredVia": "Medido a través de $name",
+      "measuredPhoneSpeaker": "Medido con el altavoz del teléfono (no el del coche)",
+      "measuredUsb": "Medido a través de USB",
+      "sourceUnrecognized": "Origen de audio no reconocido",
+      "details": "Detalles",
+      "verified": "Verificado: residuo $residual µs · dispersión $sigma µs · $valid/$reps válidas · banda $band",
+      "bandsLine": "Sin retraso, R−L por banda: graves $low · medios $mid · agudos $high ms",
+      "output": "Salida: $name",
+      "outputRaw": "Salida: $name ($raw)",
+      "microphone": "Micrófono: $name",
+      "noise": "Ruido: $db dBFS"
+    },
+    "profiles": {
+      "title": "Perfiles",
+      "saveCurrent": "Guardar actual",
+      "empty": "Sin perfiles todavía. Cada alineación automática guarda uno.",
+      "hint": "Toca un perfil para aplicarlo; desliza para borrarlo.",
+      "autoName": "Auto $time",
+      "dialogTitle": "Guardar perfil",
+      "dialogHint": "Nombre (ej. Conductor)"
+    }
+  },
+  "advanced": {
+    "title": "Avanzado",
+    "manual": {
+      "title": "Ajuste manual",
+      "subtitle": "Los cambios se aplican en vivo si la alineación está activa.",
+      "difference": "≈ $cm cm de diferencia",
+      "delayLeft": "Retrasar izq.",
+      "delayRight": "Retrasar der.",
+      "startAlignment": "Iniciar alineación"
+    },
+    "demo": {
+      "title": "Demostración",
+      "description": "Va de 0 ms a un perfil con música sonando: se oye cómo el escenario se centra.",
+      "needsProfile": "Guarda un perfil primero (alinea o usa \"Guardar actual\").",
+      "stop": "Detener demostración",
+      "profile": "Perfil",
+      "profileItem": "$name · $ms ms $side",
+      "duration": "Duración",
+      "steps": "Pasos",
+      "seconds": "$n s",
+      "toProfile": "0 → perfil",
+      "roundTrip": "Ida y vuelta",
+      "preparing": "Preparando",
+      "unaligned": "Sin alineación",
+      "centering": "Centrando",
+      "aligned": "Alineado",
+      "removing": "Quitando",
+      "stepOf": "$label  (paso $k de $n)"
+    },
+    "diagnostics": {
+      "title": "Diagnóstico y compatibilidad",
+      "subtitle": "Qué soporta este teléfono y cómo prepararlo"
+    }
+  },
+  "diagnostics": {
+    "title": "Diagnóstico",
+    "intro": "Qué soporta este teléfono. Si algo no funciona en otro móvil, copia el informe y compártelo.",
+    "loading": "Cargando…",
+    "noData": "Sin datos",
+    "noResponse": "Sin respuesta",
+    "testMute": "Probar silenciado",
+    "copyReport": "Copiar informe",
+    "refresh": "Actualizar",
+    "batterySaver": "Ahorro de batería",
+    "reportCopied": "Informe copiado",
+    "muteWorks": "El canal para silenciar funciona en este teléfono.\n$detail",
+    "muteFails": "El canal para silenciar NO funciona todavía.\n$detail",
+    "limitationTitle": "Limitación importante",
+    "limitationBody": "Android no deja que una app normal silencie a otra. CarAlign necesita un canal de ADB para hacerlo: hay que activarlo con un ordenador (adb tcpip 5555) cada vez que se reinicia el teléfono, o usar Shizuku. Sin ese canal la app no silencia el audio original y no se activa.",
+    "setupTitle": "Preparar otro teléfono",
+    "step1": "Activa las opciones de desarrollador: Ajustes → Acerca del teléfono → toca 7 veces \"Número de compilación\".",
+    "step2": "En Opciones de desarrollador activa \"Depuración USB\".",
+    "step3": "Conecta el teléfono a un ordenador con ADB y ejecuta  adb tcpip 5555 . Hay que repetirlo cada vez que se reinicia el teléfono.",
+    "step4": "Abre CarAlign. Si aparece \"¿Permitir depuración?\", acéptalo y marca \"Siempre permitir\".",
+    "step5": "Pulsa \"Probar silenciado\". Si falla, mira el motivo: algunas marcas piden más ajustes (Xiaomi/Redmi/POCO: \"Depuración USB (ajustes de seguridad)\"; Samsung: desactivar el bloqueo de comandos por USB de Auto Blocker).",
+    "step6": "Pulsa \"Ahorro de batería\" y permite que CarAlign funcione sin restricciones, para que no la cierren en segundo plano.",
+    "footer": "Sin este canal la app no puede silenciar el audio original y se oiría doble."
+  },
+  "guard": {
+    "adbInactiveNoShizuku": "El ADB por red no está activo. Tampoco hay Shizuku en ejecución: abre Shizuku y pulsa Iniciar (depuración inalámbrica), o conecta el cable y ejecuta adb tcpip 5555 desde un ordenador.",
+    "adbFailedNoShizuku": "No se pudo usar el ADB del teléfono: $error. Tampoco hay Shizuku en ejecución: abre Shizuku y pulsa Iniciar (depuración inalámbrica), o conecta el cable y ejecuta adb tcpip 5555 desde un ordenador.",
+    "shizukuFailed": "Shizuku está activo pero falló: $error",
+    "notStarted": "El vigilante no arrancó."
+  },
+  "resultMessage": {
+    "speakerOutput": "La salida de audio es el altavoz del teléfono, no el coche. Conecta Android Auto o el Bluetooth del coche y repite.",
+    "bluetoothCallLine": "El audio va por la línea de llamadas Bluetooth (mono, baja calidad). En el teléfono, Bluetooth > coche > activa \"Audio multimedia\" y vuelve a intentar.",
+    "noSignal": "No se oye bien la señal: sube el volumen del coche, cierra ventanas o reduce el ruido y repite.",
+    "clipped": "La señal recortaba; se bajó el nivel de la medición.",
+    "measurementUnreliable": "La medición no fue fiable: $reason.",
+    "verificationUnreliable": "La verificación no fue fiable: $reason.",
+    "differenceTooLarge": "La diferencia medida es muy grande; revisa la posición del teléfono.",
+    "notVerifiable": "No se pudo verificar el ajuste, por eso no se aplica.",
+    "identicalChannels": "Izquierdo y derecho suenan idénticos (misma llegada y mismo nivel). Si no lo esperabas, la salida puede ser mono o mezclada; revisa balance, fader y que el audio sea estéreo.",
+    "notConverging": "El ajuste no converge del todo; queda un residuo de $us µs.",
+    "notConvergingRejected": "El ajuste no converge (residuo $us µs); no se aplica.",
+    "internalError": "Error interno: $detail",
+    "unknown": "Mensaje desconocido ($code)"
+  },
+  "reason": {
+    "fewValidReps": "pocas repeticiones válidas ($count)",
+    "lowRepeatability": "poca repetibilidad (dispersión $us µs)",
+    "recordingTooShort": "grabación demasiado corta",
+    "recordingSilent": "grabación en silencio",
+    "unknown": "causa desconocida"
+  },
+  "placement": {
+    "title": "Cómo colocar el teléfono",
+    "topCaption": "Vista desde arriba: el teléfono ocupa el lugar de la cabeza.",
+    "sideCaption": "Vista de lado: a la altura de los oídos, tumbado, con el micrófono hacia adelante.",
+    "step1Title": "Donde va la cabeza",
+    "step1Body": "A la altura de los oídos y centrado entre ambos, no pegado a la puerta. Un centímetro de diferencia ya cambia el resultado, así que colócalo siempre igual.",
+    "step2Title": "Micrófono hacia el frente",
+    "step2Body": "El borde de abajo del teléfono (donde está el micrófono) apunta al parabrisas. No lo tapes con la mano ni con una funda gruesa.",
+    "step3Title": "Quieto y firme",
+    "step3Body": "Apoyado o en un soporte, nunca en la mano. Si se mueve, la medición se descarta.",
+    "carTitle": "En el coche",
+    "car1": "Ventanas cerradas y nadie hablando",
+    "car2": "Motor apagado o estable",
+    "car3": "Volumen del coche en medio",
+    "car4": "Fader totalmente hacia adelante (traseros apagados)",
+    "car5": "Balance al centro y tonos en plano",
+    "car6": "Conectado por Android Auto o Bluetooth, con la música en pausa",
+    "rearWarning": "Con los traseros activos el sonido \"viene de atrás\" y la medición se sesga.",
+    "firstRunInfo": "Tendrás 10 s para dejar el teléfono; después sonarán sonidos de prueba durante algo más de un minuto. Un tono ascendente al final es éxito; uno grave, que hay que repetir.",
+    "info": "Al medir tendrás 10 s para dejar el teléfono. Un tono ascendente al final es éxito; uno grave, que hay que repetir.",
+    "dontShowAgain": "No volver a mostrar",
+    "dontShowAgainHint": "Siempre la encuentras con el icono de ayuda",
+    "gotIt": "Entendido, empezar",
+    "figure": {
+      "windshieldFront": "Parabrisas (frente)",
+      "leftMarker": "I",
+      "rightMarker": "D",
+      "centered": "Centrado",
+      "micForward": "Micrófono\nhacia el frente",
+      "notAgainstDoor": "No pegado\na la puerta",
+      "windshield": "Parabrisas",
+      "earHeight": "Altura de los oídos",
+      "micBottomEdge": "Micrófono (borde de abajo)\nhacia el frente",
+      "phoneLying": "Teléfono\ntumbado"
+    }
+  }
+}

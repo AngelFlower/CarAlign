@@ -35,7 +35,7 @@ public class MainActivity extends FlutterActivity {
                 pendingDelayMs = ((Number) call.argument("delayMs")).floatValue();
                 pendingLeft = Boolean.TRUE.equals(call.argument("left"));
                 MediaProjectionManager m = getSystemService(MediaProjectionManager.class);
-                // En Android 14+ el aviso ofrece capturar "una sola app", que limitaria el audio; se fuerza la pantalla completa
+                // Android 14+ offers to capture "a single app", which would limit the audio; force full-screen capture
                 Intent consent = android.os.Build.VERSION.SDK_INT >= 34
                         ? m.createScreenCaptureIntent(android.media.projection.MediaProjectionConfig.createConfigForDefaultDisplay())
                         : m.createScreenCaptureIntent();
@@ -111,7 +111,7 @@ public class MainActivity extends FlutterActivity {
                 }).start();
                 break;
             case "batteryExempt": {
-                // Sin el permiso REQUEST_IGNORE_BATTERY_OPTIMIZATIONS (restringido en Google Play): abre la lista de ajustes
+                // Without the REQUEST_IGNORE_BATTERY_OPTIMIZATIONS permission (restricted on Google Play): opens the settings list
                 try {
                     startActivity(new Intent(android.provider.Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS));
                 } catch (Exception e) {
@@ -149,14 +149,14 @@ public class MainActivity extends FlutterActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        GuardManager.startLease(getApplicationContext()); // mientras la app esta visible, el vigilante sigue vivo
+        GuardManager.startLease(getApplicationContext()); // while the app is visible, the guard stays alive
         GuardManager.ensure(getApplicationContext());
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        GuardManager.stopLease(); // si no hay captura, el vigilante se apaga solo en unos segundos
+        GuardManager.stopLease(); // with no capture running, the guard shuts itself down in a few seconds
     }
 
     @Override

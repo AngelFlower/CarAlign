@@ -8,8 +8,8 @@ import dadb.AdbKeyPair;
 import dadb.Dadb;
 
 /**
- * Canal con privilegios de shell: la app se conecta por loopback al adbd en modo TCP (puerto 5555).
- * Requiere `adb tcpip 5555` tras cada reinicio del telefono y aceptar una vez el aviso de depuracion.
+ * Shell-privileged channel: the app connects over loopback to adbd in TCP mode (port 5555).
+ * Needs `adb tcpip 5555` after every reboot and accepting the debugging prompt once.
  */
 final class Priv {
     static final int PORT = 5555;

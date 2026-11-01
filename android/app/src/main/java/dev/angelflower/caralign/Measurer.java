@@ -17,7 +17,7 @@ import java.io.FileOutputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 
-/** Una medicion real: reproduce la secuencia por la salida activa y graba con el microfono integrado. */
+/** A real measurement: plays the sequence through the active output and records with the built-in microphone. */
 final class Measurer implements AlignLogic.Measure {
     private static final String TAG = "CarAlign";
     static final int FS = 48000;
@@ -41,7 +41,7 @@ final class Measurer implements AlignLogic.Measure {
         float[] ref = Chirp.make(FS);
         short[] out = TestSignal.stereo(ref, p, ampDb, dL, dR);
         int outFrames = out.length / 2;
-        int recFrames = outFrames + (int) (2.5 * FS); // la latencia de Android Auto ronda 1 s
+        int recFrames = outFrames + (int) (2.5 * FS); // Android Auto latency is around 1 s
 
         AudioManager am = ctx.getSystemService(AudioManager.class);
         AudioRecord rec = buildRecord(am, recFrames);
@@ -78,7 +78,7 @@ final class Measurer implements AlignLogic.Measure {
             try { tr.stop(); } catch (Exception ignored) { }
             tr.release();
         }
-        if (got < recFrames * 9 / 10) throw new IOException("grabacion incompleta (" + got + "/" + recFrames + ")");
+        if (got < recFrames * 9 / 10) throw new IOException("incomplete recording (" + got + "/" + recFrames + ")");
 
         AlignLogic.Meas m = new AlignLogic.Meas();
         m.ampDb = ampDb;
@@ -92,7 +92,7 @@ final class Measurer implements AlignLogic.Measure {
         }
         m.peak = peak / 32768.0;
         m.clipped = peak >= 31800;
-        int nq = Math.min(got, (int) (0.12 * FS)); // antes de que empiece la reproduccion
+        int nq = Math.min(got, (int) (0.12 * FS)); // before playback starts
         double e = 0;
         for (int i = 0; i < nq; i++) e += x[i] * (double) x[i];
         m.noiseDbfs = 20 * Math.log10(Math.max(Math.sqrt(e / Math.max(nq, 1)), 1e-9));
@@ -115,7 +115,7 @@ final class Measurer implements AlignLogic.Measure {
             Detector.aggregate(m.det, mask);
         }
         if (reps > 1) m.file = saveWav(buf, got);
-        Log.i(TAG, String.format("medicion amp=%.0f dBFS dL=%d dR=%d ruido=%.1f dBFS pico=%.2f salida=%s entrada=%s validas=%s mediana=%s",
+        Log.i(TAG, String.format("measurement amp=%.0f dBFS dL=%d dR=%d noise=%.1f dBFS peak=%.2f output=%s input=%s valid=%s median=%s",
                 ampDb, dL, dR, m.noiseDbfs, m.peak, outDev, inDev,
                 m.det.error != null ? m.det.error : String.valueOf(m.det.valid[0]),
                 m.det.error != null ? "-" : String.format("%+.4f ms", m.det.medianMs[0])));
@@ -133,10 +133,10 @@ final class Measurer implements AlignLogic.Measure {
                 if (c.getState() == AudioRecord.STATE_INITIALIZED) { r = c; break; }
                 c.release();
             } catch (Exception e) {
-                Log.w(TAG, "fuente " + src + " no disponible: " + e);
+                Log.w(TAG, "source " + src + " not available: " + e);
             }
         }
-        if (r == null) throw new IllegalStateException("no se pudo abrir el microfono");
+        if (r == null) throw new IllegalStateException("could not open the microphone");
         for (AudioDeviceInfo d : am.getDevices(AudioManager.GET_DEVICES_INPUTS)) {
             if (d.getType() == AudioDeviceInfo.TYPE_BUILTIN_MIC) {
                 r.setPreferredDevice(d);
@@ -147,7 +147,7 @@ final class Measurer implements AlignLogic.Measure {
     }
 
     static String describe(AudioDeviceInfo d) {
-        return d == null ? "desconocido" : d.getType() + ":" + d.getProductName();
+        return d == null ? "unknown" : d.getType() + ":" + d.getProductName();
     }
 
     private String saveWav(short[] pcm, int n) {
@@ -164,7 +164,7 @@ final class Measurer implements AlignLogic.Measure {
             }
             return f.getName();
         } catch (IOException e) {
-            Log.w(TAG, "no se pudo guardar el wav: " + e);
+            Log.w(TAG, "could not save the wav: " + e);
             return "";
         }
     }

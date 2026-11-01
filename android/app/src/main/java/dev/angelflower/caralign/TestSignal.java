@@ -1,10 +1,10 @@
 package dev.angelflower.caralign;
 
-/** Secuencia de medicion: por repeticion un chirp solo en L y, `gap` muestras despues, uno solo en R. */
+/** Measurement sequence: per repetition a chirp only on L and, `gap` samples later, one only on R. */
 final class TestSignal {
-    static final double PILOT_LEAD_S = 2.0, LEAD_S = 3.0, PERIOD_S = 1.6, GAP_S = 0.7, TAIL_S = 0.8; // gap != period/2: evita confundir L con R
-    /** El piloto tambien lleva calentamiento: un enlace Bluetooth dormido tarda en despertar y se come el inicio. */
-    /** Cama de ruido bajisimo durante el calentamiento: mantiene activo el flujo de Android Auto/Bluetooth. */
+    static final double PILOT_LEAD_S = 2.0, LEAD_S = 3.0, PERIOD_S = 1.6, GAP_S = 0.7, TAIL_S = 0.8; // gap != period/2: avoids confusing L with R
+    /** The pilot also carries a warm-up: a sleeping Bluetooth link takes time to wake and swallows the start. */
+    /** A very quiet noise bed during the warm-up: keeps the Android Auto/Bluetooth stream active. */
     static final double BED_DB_BELOW = 28, BED_END_BEFORE_S = 0.4;
 
     private TestSignal() {}
@@ -20,15 +20,15 @@ final class TestSignal {
     }
 
     /**
-     * Estereo entrelazado en 16 bits. dL y dR retrasan el chirp de cada canal en muestras:
-     * es lo mismo que aplicar el retraso a la corriente (sirve para verificar en lazo cerrado).
+     * Interleaved 16-bit stereo. dL and dR delay each channel's chirp by that many samples:
+     * the same as applying the delay to the stream (used to verify in a closed loop).
      */
     static short[] stereo(float[] ref, Detector.Params p, double ampDbfs, int dL, int dR) {
         int lead = p.lead, tail = (int) (TAIL_S * p.fs);
         int total = lead + (p.reps - 1) * p.period + p.gap + ref.length + tail + Math.max(dL, dR);
         short[] out = new short[total * 2];
         double a = Math.pow(10, ampDbfs / 20) * 32767;
-        if (lead > p.fs * 1.5) { // calentamiento: ruido decorrelado por canal, sin tocar la zona de los chirps
+        if (lead > p.fs * 1.5) { // warm-up: noise decorrelated per channel, without touching the chirp area
             java.util.Random rnd = new java.util.Random(12345);
             double bed = Math.pow(10, (ampDbfs - BED_DB_BELOW) / 20) * 32767 * 0.3;
             int end = lead - (int) (BED_END_BEFORE_S * p.fs);
